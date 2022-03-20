@@ -34,7 +34,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     success: true,
     data: {
       accessToken: user.getAccessToken(),
-      expiresAt: Date.now() + 9_00_000, // 15 min
+      expiresAt: Date.now() + Number(config.ACCESS_TOKEN_EXPIRE_MS), // 15 min
     },
   });
 });
@@ -130,7 +130,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
     success: true,
     data: {
       accessToken: user.getAccessToken(),
-      expiresAt: Date.now() + 2_59_20_00_000, // 30 Days in milliseconds: 30 * 24 * 60 * 60 * 1000
+      expiresAt: Date.now() + Number(config.REFRESH_TOKEN_EXPIRE_MS),
     },
   });
 });

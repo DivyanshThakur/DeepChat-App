@@ -46,7 +46,7 @@ userSchema.methods.matchPassword = async function (password) {
 
 userSchema.methods.getAccessToken = function () {
   return jwt.sign({ id: this._id }, config.ACCESS_TOKEN_SECRET, {
-    expiresIn: "15min",
+    expiresIn: config.ACCESS_TOKEN_EXPIRE,
   });
 };
 
@@ -55,21 +55,18 @@ userSchema.methods.getRefreshToken = function () {
     { id: this._id, tokenVersion: this.tokenVersion },
     config.REFRESH_TOKEN_SECRET,
     {
-      expiresIn: "30days",
+      expiresIn: config.REFRESH_TOKEN_EXPIRE,
     }
   );
 };
 
-userSchema.methods.sendRefreshToken = function (
-  res,
-  token
-) {
+userSchema.methods.sendRefreshToken = function (res, token) {
   res.cookie(
     "jwt",
     { token },
     {
       httpOnly: true,
-      expires: new Date(2_59_20_00_000 + Date.now()), // 30 Days in milliseconds: 30 * 24 * 60 * 60 * 1000
+      expires: new Date(Number(config.REFRESH_TOKEN_EXPIRE_MS) + Date.now()),
       path: "/api/auth/refresh-token",
       sameSite: "none",
       secure: true,
@@ -88,7 +85,7 @@ userSchema.methods.getResetPasswordToken = function () {
     uppercase: false,
   });
 
-  const expiresAt = Date.now() + 5 * (60 * 1000); // 5 minutes
+  const expiresAt = Date.now() + 3_00_000; // 5 minutes
 
   this.resetPassword = { token, otp, expiresAt };
 
