@@ -12,3 +12,7 @@ export const MESSAGE = "Message";
 
 // File Paths for different file types
 export const USER_AVATAR_PATH = "uploads/images/avatar";
+
+// Default Avatar Url
+export const DEFAULT_AVATAR_URL = "/";
+export const DEFAULT_GROUP_AVATAR_URL = "/";

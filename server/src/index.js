@@ -11,6 +11,8 @@ import connectDB from "./config/db.js";
 import config from "./config/index.js";
 import socketIO from "./utils/socketIO.js";
 import { errorHandler, notFound } from "./middleware/error.js";
+import authRoutes from './routes/auth.js';
+// import chatRoutes from './routes/chats.js';
 
 const app = express();
 
@@ -42,7 +44,8 @@ if (config.NODE_ENV === "development") {
 }
 
 /* Apis */
-app.use("/api/chats", chatRoutes);
+app.use("/api/auth", authRoutes);
+// app.use("/api/chats", chatRoutes);
 
 app.get("/", (_, res) => res.send("Welcome to DeepChat App API!"));
 
