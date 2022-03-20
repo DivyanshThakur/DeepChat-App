@@ -9,9 +9,9 @@ import morgan from "morgan";
 import helmet from "helmet";
 import connectDB from "./config/db.js";
 import config from "./config/index.js";
-import socketIO from "./utils/socketIO.js";
+// import socketIO from "./utils/socketIO.js";
 import { errorHandler, notFound } from "./middleware/error.js";
-import authRoutes from './routes/auth.js';
+import authRoutes from "./routes/auth.js";
 // import chatRoutes from './routes/chats.js';
 
 const app = express();
@@ -54,7 +54,7 @@ app.use(notFound);
 app.use(errorHandler);
 
 /* Socket IO */
-io.on("connection", socketIO);
+// io.on("connection", socketIO);
 
 /* Server */
 const PORT = config.PORT || 5000;
