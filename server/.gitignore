@@ -1,0 +1,4 @@
+node_modules
+.env
+src/models/User.js
+src/middleware/auth.js
