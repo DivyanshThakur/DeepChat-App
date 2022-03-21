@@ -17,8 +17,7 @@ const userSchema = new Schema({
     minLength: 6,
     select: false,
   },
-  firstName: ReqString,
-  lastName: ReqString,
+  name: ReqString,
   avatar: ReqString,
   tokenVersion: {
     type: Number,

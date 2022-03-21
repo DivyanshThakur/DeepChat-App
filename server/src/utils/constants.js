@@ -14,5 +14,5 @@ export const MESSAGE = "Message";
 export const USER_AVATAR_PATH = "uploads/images/avatar";
 
 // Default Avatar Url
-export const DEFAULT_AVATAR_URL = "/";
-export const DEFAULT_GROUP_AVATAR_URL = "/";
+export const DEFAULT_AVATAR_URL = "https://res.cloudinary.com/deepchatapp/image/upload/v1647841025/media/solo_lqg428.jpg";
+export const DEFAULT_GROUP_AVATAR_URL = "https://res.cloudinary.com/deepchatapp/image/upload/v1647841077/media/group_fxxagh.jpg";

@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { v2 as cloudinary } from "cloudinary";
 import asyncHandler from "express-async-handler";
 import crypto from "crypto";
 import ErrorResponse from "../utils/ErrorResponse.js";
@@ -6,6 +7,12 @@ import sendEmail from "../services/email.js";
 import User from "../models/User.js";
 import config from "../config/index.js";
 import { DEFAULT_AVATAR_URL } from "../utils/constants.js";
+
+cloudinary.config({
+  cloud_name: config.CLOUDINARY_NAME,
+  api_key: config.CLOUDINARY_API_KEY,
+  api_secret: config.CLOUDINARY_API_SECRET,
+});
 
 /**
  * @desc User Login
@@ -34,7 +41,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     success: true,
     data: {
       accessToken: user.getAccessToken(),
-      expiresAt: Date.now() + Number(config.ACCESS_TOKEN_EXPIRE_MS), // 15 min
+      expiresAt: Date.now() + parseInt(config.ACCESS_TOKEN_EXPIRE_MS), // 15 min
     },
   });
 });
@@ -45,14 +52,13 @@ export const loginUser = asyncHandler(async (req, res) => {
  * @access Private
  */
 export const registerUser = asyncHandler(async (req, res) => {
-  const { email, password, confirmPassword, firstName, lastName } = req.body;
-  const { file } = req;
+  const { image, name, email, password, confirmPassword } = req.body;
 
   if (password !== confirmPassword) {
     throw new ErrorResponse("Password don't match", 400);
   }
 
-  let userExists = await User.findOne(email, "email");
+  let userExists = await User.findOne({ email }, "email");
 
   if (userExists) {
     throw new ErrorResponse("Email already exists", 400);
@@ -60,19 +66,24 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   let avatar;
 
-  if (file) {
-    avatar = await uploadFile(file, USER_AVATAR_PATH);
+  if (image) {
+    const result = await cloudinary.uploader.upload(image, {
+      upload_preset: "deepchat",
+    });
+
+    avatar = result.secure_url;
   } else {
     avatar = DEFAULT_AVATAR_URL;
   }
 
   const user = await User.create({
+    name,
     email,
     password,
-    firstName,
-    lastName,
     avatar,
   });
+
+  console.log(user);
 
   if (!user) {
     throw new ErrorResponse("Invalid user data", 400);
@@ -80,7 +91,10 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   res.json({
     success: true,
-    data: user,
+    data: {
+      accessToken: user.getAccessToken(),
+      expiresAt: Date.now() + parseInt(config.ACCESS_TOKEN_EXPIRE_MS), // 15 min
+    },
     message: "User registered successfully",
   });
 });
@@ -130,7 +144,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
     success: true,
     data: {
       accessToken: user.getAccessToken(),
-      expiresAt: Date.now() + Number(config.REFRESH_TOKEN_EXPIRE_MS),
+      expiresAt: Date.now() + parseInt(config.REFRESH_TOKEN_EXPIRE_MS),
     },
   });
 });

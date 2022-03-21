@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "cloudinary": "^1.28.1",
     "colors": "^1.4.0",
     "consola": "^2.15.3",
     "cors": "^2.8.5",

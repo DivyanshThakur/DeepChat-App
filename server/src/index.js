@@ -4,7 +4,7 @@ import { Server } from "socket.io";
 // import cookieParser from "cookie-parser";
 import consola from "consola";
 import colors from "colors";
-// import cors from "cors";
+import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import connectDB from "./config/db.js";
@@ -30,12 +30,12 @@ connectDB();
 
 /* Custom Middlewares */
 app.use(helmet());
-// app.use(
-//   cors({
-//     origin: [config.CLIENT_DEV, config.DEEPCHAT_APP],
-//     credentials: true,
-//   })
-// );
+app.use(
+  cors({
+    origin: [config.CLIENT_DEV, config.DEEPCHAT_APP],
+    credentials: true,
+  })
+);
 // app.use(cookieParser());
 app.use(express.json());
 
