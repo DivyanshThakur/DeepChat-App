@@ -1,6 +1,6 @@
 import express from "express";
 import { createServer } from "http";
-import { Server } from "socket.io";
+// import { Server } from "socket.io";
 // import cookieParser from "cookie-parser";
 import consola from "consola";
 import colors from "colors";
@@ -12,19 +12,20 @@ import config from "./config/index.js";
 // import socketIO from "./utils/socketIO.js";
 import { errorHandler, notFound } from "./middleware/error.js";
 import authRoutes from "./routes/auth.js";
-// import chatRoutes from './routes/chats.js';
+import userRoutes from './routes/user.js';
+import chatRoutes from './routes/chat.js';
 
 const app = express();
 
 const httpServer = createServer(app);
-const options = {
-  cors: {
-    origin: [config.CLIENT_DEV, config.DEEPCHAT_APP],
-    credentials: true,
-  },
-};
+// const options = {
+//   cors: {
+//     origin: [config.CLIENT_DEV, config.DEEPCHAT_APP],
+//     credentials: true,
+//   },
+// };
 
-const io = new Server(httpServer, options);
+// const io = new Server(httpServer, options);
 
 connectDB();
 
@@ -45,7 +46,8 @@ if (config.NODE_ENV === "development") {
 
 /* Apis */
 app.use("/api/auth", authRoutes);
-// app.use("/api/chats", chatRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/chats", chatRoutes);
 
 app.get("/", (_, res) => res.send("Welcome to DeepChat App API!"));
 

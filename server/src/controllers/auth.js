@@ -83,8 +83,6 @@ export const registerUser = asyncHandler(async (req, res) => {
     avatar,
   });
 
-  console.log(user);
-
   if (!user) {
     throw new ErrorResponse("Invalid user data", 400);
   }

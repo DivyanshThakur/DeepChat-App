@@ -6,7 +6,7 @@ import Toolbar from "../Toolbar";
 import Message from "../Message";
 import { differenceInMilliseconds, formatDuration } from "date-fns";
 import "./MessageList.css";
-import { Avatar, Divider } from "@material-ui/core";
+import { Avatar } from "@material-ui/core";
 
 const MY_USER_ID = "apple";
 
