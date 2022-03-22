@@ -24,7 +24,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   const errorMessage = "Invalid email or password";
 
-  const user = await User.findOne({ email }, "email password tokenVersion");
+  const user = await User.findOne({ email }, "avatar email password tokenVersion");
 
   if (!user) {
     throw new ErrorResponse(errorMessage, 401);
@@ -36,10 +36,10 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   const token = user.getRefreshToken();
   user.sendRefreshToken(res, token);
-
   res.json({
     success: true,
     data: {
+      avatar: user.avatar,
       accessToken: user.getAccessToken(),
       expiresAt: Date.now() + parseInt(config.ACCESS_TOKEN_EXPIRE_MS), // 15 min
     },

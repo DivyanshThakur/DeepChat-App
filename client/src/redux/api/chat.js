@@ -30,7 +30,16 @@ export const chatApi = rootApi.injectEndpoints({
       invalidatesTags: ["CHATS"],
       transformResponse: (response) => response.data,
     }),
+    createGroup: build.mutation({
+      query: (body) => ({
+        url: "chats/group",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["CHATS"],
+      transformResponse: (response) => response.data,
+    }),
   }),
 });
 
-export const { useGetChatsQuery, useAccessChatsMutation } = chatApi;
+export const { useGetChatsQuery, useAccessChatsMutation, useCreateGroupMutation } = chatApi;

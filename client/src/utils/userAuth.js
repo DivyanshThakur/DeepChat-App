@@ -13,12 +13,13 @@ export const getUserAuth = () => {
   let data = localStorage.getItem(`${process.env.REACT_APP_PREFIX}-userAuth`);
 
   const getInitialState = () => ({
+    avatar: "",
     accessToken: null,
     expiresAt: Date.now(),
   });
 
   if (!data) return getInitialState();
-  
+
   data = JSON.parse(data);
 
   return data.expiresAt > Date.now() ? data : getInitialState();

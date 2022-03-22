@@ -8,6 +8,7 @@ export const authApi = rootApi.injectEndpoints({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["CHATS"],
       transformResponse: (response) => response.data,
     }),
     register: build.mutation({
@@ -31,6 +32,7 @@ export const authApi = rootApi.injectEndpoints({
         url: "auth/logout",
         method: "POST",
       }),
+      invalidatesTags: ["CHATS"],
     }),
     forgotPassword: build.mutation({
       query: (body) => ({

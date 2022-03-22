@@ -13,6 +13,7 @@ const userSchema = {
 const chatSchema = new Schema(
   {
     name: ReqString,
+    avatar: String,
     isGroupChat: DefBoolean,
     latestMessage: {
       type: ObjectId,

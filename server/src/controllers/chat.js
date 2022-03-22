@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Chat from "../models/Chat.js";
 import User from "../models/User.js";
+import { DEFAULT_GROUP_AVATAR_URL } from "../utils/constants.js";
 
 /**
  * @desc Access chat
@@ -36,7 +37,8 @@ export const accessChat = asyncHandler(async (req, res) => {
       users: [req.user._id, userId],
     };
     chat = await Chat.create(chatData);
-    await chat.populate("users");
+
+    await chat.populate("users").execPopulate();
   }
 
   res.json({
@@ -87,13 +89,14 @@ export const createGroupChat = asyncHandler(async (req, res) => {
   }
 
   if (users.length === 0) {
-    throw new Error("Add users");
+    throw new Error("No user selected");
   }
 
-  users.push(req.user_id);
+  users.push(req.user._id);
 
-  const groupChat = await Chat.create({
+  let groupChat = await Chat.create({
     name,
+    avatar: DEFAULT_GROUP_AVATAR_URL,
     users,
     isGroupChat: true,
     admins: [req.user._id],
@@ -103,7 +106,7 @@ export const createGroupChat = asyncHandler(async (req, res) => {
     throw new Error("Unable to create group");
   }
 
-  await groupChat.populate("users").populate("admins");
+  groupChat = await Chat.findById(groupChat._id).populate(["users", "admins"]);
 
   res.json({
     success: true,

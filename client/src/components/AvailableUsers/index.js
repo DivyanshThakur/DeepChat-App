@@ -8,7 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import { Box } from "@material-ui/core";
 import useStyles from "./style";
 
-const AvailableUsers = ({ data, selected, onSelect}) => {
+const AvailableUsers = ({ data, selected, onSelect, multiple }) => {
   const classes = useStyles();
 
   return (
@@ -18,9 +18,13 @@ const AvailableUsers = ({ data, selected, onSelect}) => {
           return (
             <React.Fragment key={index}>
               <ListItem
-                selected={selected.includes(user._id)}
+                selected={
+                  multiple
+                    ? selected.find(({ _id }) => _id === user._id) != null
+                    : selected === user._id
+                }
                 button
-                onClick={() => onSelect(user._id)}
+                onClick={() => onSelect(multiple ? user : user._id)}
               >
                 <ListItemAvatar>
                   <Avatar className={classes.avatar} src={user.avatar} />

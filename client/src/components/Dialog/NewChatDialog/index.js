@@ -13,7 +13,7 @@ import { setChatId } from "../../../redux/slices/selectedChat";
 import { useAccessChatsMutation } from "../../../redux/api/chat";
 import protectedHandler from "../../../utils/protectedHandler";
 
-const NewChatDialog = ({ handleClose, ...props }) => {
+const NewChatDialog = ({ handleClose, setOpen, ...props }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -50,16 +50,21 @@ const NewChatDialog = ({ handleClose, ...props }) => {
   };
 
   const handleSelectedChat = protectedHandler(async () => {
+    handleOnClose();
     const chat = await accessChat({ userId: selectedUserId }).unwrap();
 
     dispatch(setChatId(chat._id));
-    handleOnClose();
   });
 
   return (
     <Dialog onClose={handleOnClose} {...props}>
       <DialogContent className={classes.content}>
-        <Button fullWidth variant="contained" color="secondary">
+        <Button
+          fullWidth
+          variant="contained"
+          color="secondary"
+          onClick={() => setOpen(2)}
+        >
           New Group Chat
         </Button>
         <Divider className={classes.divider} />
@@ -73,7 +78,7 @@ const NewChatDialog = ({ handleClose, ...props }) => {
         />
         <AvailableUsers
           data={users}
-          selected={[selectedUserId]}
+          selected={selectedUserId}
           onSelect={setSelectedUserId}
         />
       </DialogContent>
