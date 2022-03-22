@@ -14,7 +14,7 @@ export const accessChat = asyncHandler(async (req, res) => {
     throw new Error("Invalid user Id");
   }
 
-  var chat = await Chat.findOne({
+  let chat = await Chat.findOne({
     isGroupChat: false,
     $and: [
       { users: { $elemMatch: { $eq: req.user._id } } },
@@ -51,7 +51,7 @@ export const accessChat = asyncHandler(async (req, res) => {
  * @access Private
  */
 export const getChats = asyncHandler(async (req, res) => {
-  const chats = Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
+  let chats = Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
     .populate("users")
     .populate("admins")
     .populate("latestMessage")
@@ -68,7 +68,10 @@ export const getChats = asyncHandler(async (req, res) => {
 
   res.json({
     success: true,
-    data: chats,
+    data: {
+      user: req.user,
+      chats,
+    },
   });
 });
 

@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
-import SaveIcon from "@mui/icons-material/Save";
+import ChatIcon from '@material-ui/icons/Chat';
 import LoadingIconButton from "../LoadingIconButton";
 import useStyles from "./style";
 
@@ -26,13 +26,13 @@ const UpdateButtonGroup = ({
         type="submit"
         onClick={handleOnSubmit}
         className={classes.saveButton}
-        icon={<SaveIcon />}
+        icon={<ChatIcon />}
         color="primary"
         variant="contained"
         isLoading={isLoading}
         disabled={disabled}
       >
-        Save
+        Chat
       </LoadingIconButton>
     </div>
   );

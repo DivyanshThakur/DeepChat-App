@@ -4,12 +4,12 @@ const useStyles = makeStyles((theme) => ({
   root: {
     background: "rgba(0, 0, 0, .04)",
     borderRadius: "4rem",
-    height: "2.3rem",
+    height: "2.6rem",
     margin: "0 0.5rem 0.5rem",
-    padding: "1rem",
+    padding: "0.5rem",
   },
   input: {
-    fontSize: "0.3rem",
+    fontSize: "1.2rem",
   },
   adornedStart: {
     "& > *:first-child": {

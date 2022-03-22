@@ -12,6 +12,7 @@ const url =
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `${url}/api`,
+  keepUnusedDataFor: 5,
   credentials: "include", // Required to use cookies
   prepareHeaders: (headers) => {
     // By default, if we have a token in the store, let's use that for authenticated requests
@@ -20,7 +21,7 @@ const baseQuery = fetchBaseQuery({
     if (accessToken) {
       headers.set("authorization", `Bearer ${accessToken}`);
     }
-    
+
     return headers;
   },
 });

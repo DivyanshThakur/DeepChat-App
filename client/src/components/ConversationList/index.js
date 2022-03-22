@@ -2,32 +2,35 @@ import React, { useState, useEffect } from "react";
 import ConversationListItem from "../ConversationListItem";
 import Toolbar from "../Toolbar";
 import IconButton from "@material-ui/core/IconButton";
-import SettingsIcon from "@material-ui/icons/Settings";
 import AddIcon from "@material-ui/icons/Add";
 import Avatar from "@material-ui/core/Avatar";
-import axios from "axios";
 import "./ConversationList.css";
 import SearchBar from "../Searchbar";
 import MenuButton from "../button/MenuButton";
+import { useGetChatsQuery } from "../../redux/api/chat";
+import ChatListSkeleton from "../Skeleton/chatList";
+import NewChatDialog from "../Dialog/NewChatDialog";
 
-export default function ConversationList(props) {
+export default function ConversationList() {
+  const { data, isLoading } = useGetChatsQuery();
   const [conversations, setConversations] = useState([]);
-  useEffect(() => {
-    getConversations();
-  }, []);
+  const [value, setValue] = useState("");
 
-  const getConversations = () => {
-    axios.get("https://randomuser.me/api/?results=20").then((response) => {
-      let newConversations = response.data.results.map((result) => {
-        return {
-          photo: result.picture.large,
-          name: `${result.name.first} ${result.name.last}`,
-          text: "Hello world! This is a long message that needs to be truncated.",
-        };
-      });
-      setConversations([...conversations, ...newConversations]);
-    });
+  useEffect(() => {
+    if (!data || data.length === 0) return;
+    setConversations(data);
+  }, [data]);
+
+  const handleOnSearchChange = (value) => {
+    setValue(value);
+    setConversations(
+      data?.filter(({ name }) =>
+        name.toLowerCase().includes(value.toLowerCase())
+      )
+    );
   };
+
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="conversation-list">
@@ -36,15 +39,28 @@ export default function ConversationList(props) {
         leftItems={[<Avatar alt="User Avatar" src="" />]}
         rightItems={[
           <MenuButton />,
-          <IconButton color="primary">
+          <IconButton color="primary" onClick={() => setOpen(true)}>
             <AddIcon />
           </IconButton>,
         ]}
       />
-      <SearchBar placeholder="Search Chats" />
-      {conversations.map((conversation) => (
-        <ConversationListItem key={conversation.name} data={conversation} />
-      ))}
+      <SearchBar
+        placeholder="Search Chats"
+        value={value}
+        onChange={(e) => handleOnSearchChange(e.target.value)}
+        onCancel={() => handleOnSearchChange("")}
+      />
+      {isLoading
+        ? [1, 2, 3, 4, 5, 6, 7].map((id) => <ChatListSkeleton key={id} />)
+        : conversations?.map((conversation) => (
+            <ConversationListItem key={conversation._id} data={conversation} />
+          ))}
+      <NewChatDialog
+        open={open}
+        value={"demo@gmail.com"}
+        handleClose={() => setOpen(false)}
+        aria-labelledby="new-chat-dialog"
+      />
     </div>
   );
 }

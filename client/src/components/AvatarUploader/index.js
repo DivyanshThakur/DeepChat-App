@@ -13,9 +13,7 @@ const AvatarUploader = (props) => {
     const reader = new FileReader();
     reader.onload = (avatar) => setImage(avatar.target.result);
     reader.readAsDataURL(imageToUpload);
-    console.log("prev", imageToUpload);
     const image = await resizeFile(imageToUpload);
-    console.log("image", image);
     onChange(image);
   });
 

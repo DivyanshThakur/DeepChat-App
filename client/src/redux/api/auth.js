@@ -1,6 +1,6 @@
-import { chatApi } from ".";
+import { rootApi } from ".";
 
-export const authApi = chatApi.injectEndpoints({
+export const authApi = rootApi.injectEndpoints({
   endpoints: (build) => ({
     login: build.mutation({
       query: (body) => ({
@@ -14,7 +14,6 @@ export const authApi = chatApi.injectEndpoints({
       query: (body) => ({
         url: "auth/register",
         method: "POST",
-        "Content-Type": "multipart/form-data",
         body,
       }),
       transformResponse: (response) => response.data,

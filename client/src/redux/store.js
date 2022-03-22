@@ -1,13 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query/react";
-import { chatApi } from "./api";
+import selectedChat from "./slices/selectedChat";
+import { rootApi } from "./api";
 
 const store = configureStore({
   reducer: {
-    [chatApi.reducerPath]: chatApi.reducer,
+    [rootApi.reducerPath]: rootApi.reducer,
+    selectedChat: selectedChat.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(chatApi.middleware),
+    getDefaultMiddleware().concat(rootApi.middleware),
   devTools: process.env.NODE_ENV !== "production",
 });
 

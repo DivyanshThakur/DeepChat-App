@@ -23,7 +23,10 @@ export const getAllUsers = asyncHandler(async (req, res) => {
 
   const filter = search
     ? {
-        name: { $regex: search, $options: "i" },
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+        ],
       }
     : {};
 

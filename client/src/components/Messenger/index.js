@@ -3,7 +3,7 @@ import ConversationList from "../ConversationList";
 import MessageList from "../MessageList";
 import "./Messenger.css";
 
-export default function Messenger(props) {
+export default function Messenger() {
   return (
     <div className="messenger">
       <div className="scrollable sidebar">

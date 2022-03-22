@@ -6,6 +6,9 @@ const rootTheme = responsiveFontSizes(
       primary: {
         main: "rgb(0, 153, 255)",
       },
+      secondary: {
+        main: "rgb(187, 47, 237)",
+      },
       background: {
         default: "#fff",
       },
