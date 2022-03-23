@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { CHAT, MESSAGE, USER } from "../utils/constants";
-import { ReqString } from "./types";
+import { CHAT, MESSAGE, USER } from "../utils/constants.js";
+import { ReqString } from "./types.js";
 
 const { Schema, model } = mongoose;
 const ObjectId = Schema.Types.ObjectId;
@@ -16,6 +16,7 @@ const messageSchema = new Schema(
     chat: {
       type: ObjectId,
       ref: CHAT,
+      index: true,
     },
   },
   {

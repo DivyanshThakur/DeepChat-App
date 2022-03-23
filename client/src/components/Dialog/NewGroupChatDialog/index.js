@@ -49,6 +49,7 @@ const NewGroupChatDialog = ({ handleClose, ...props }) => {
 
   const handleOnClose = () => {
     setSelectedUsers([]);
+    setGroupName("");
     handleClose();
   };
 
@@ -90,7 +91,7 @@ const NewGroupChatDialog = ({ handleClose, ...props }) => {
   };
 
   return (
-    <Dialog maxWidth="xl" onClose={handleOnClose} {...props}>
+    <Dialog maxWidth="md" onClose={handleOnClose} {...props}>
       <DialogContent className={classes.content}>
         <Typography className={classes.title}>Create Group</Typography>
         <Grid container className={classes.grid}>

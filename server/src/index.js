@@ -14,6 +14,7 @@ import { errorHandler, notFound } from "./middleware/error.js";
 import authRoutes from "./routes/auth.js";
 import userRoutes from './routes/user.js';
 import chatRoutes from './routes/chat.js';
+import messageRoutes from './routes/message.js';
 
 const app = express();
 
@@ -48,6 +49,7 @@ if (config.NODE_ENV === "development") {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chats", chatRoutes);
+app.use("/api/messages", messageRoutes);
 
 app.get("/", (_, res) => res.send("Welcome to DeepChat App API!"));
 
