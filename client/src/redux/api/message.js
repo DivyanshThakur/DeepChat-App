@@ -3,11 +3,9 @@ import { rootApi } from ".";
 export const messageApi = rootApi.injectEndpoints({
   endpoints: (build) => ({
     getMessages: build.query({
-      query: () => "messages",
+      query: (chatId) => `messages/${chatId}`,
       providesTags: ["CHATS"],
-      transformResponse: ({ data }) => {
-        return data;
-      },
+      transformResponse: ({ data }) => data,
     }),
     sendMessage: build.mutation({
       query: (body) => ({
@@ -22,4 +20,4 @@ export const messageApi = rootApi.injectEndpoints({
   }),
 });
 
-export const { useSendMessageMutation } = messageApi;
+export const { useGetMessagesQuery, useSendMessageMutation } = messageApi;

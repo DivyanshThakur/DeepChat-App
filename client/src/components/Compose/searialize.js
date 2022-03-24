@@ -34,8 +34,13 @@ const serialize = (node) => {
       return `<ol>${children}</ol>`;
     case "paragraph":
       return `<p>${children}</p>`;
+    case "emoji":
+      console.log(node);
+      return `<span>${node.character}</span>`;
     case "link":
-      return `<a href="${escapeHtml(node.url)}" target="_blank" rel="noreferrer">${children}</a>`;
+      return `<a href="${escapeHtml(
+        node.url
+      )}" target="_blank" rel="noreferrer">${children}</a>`;
     default:
       return children;
   }

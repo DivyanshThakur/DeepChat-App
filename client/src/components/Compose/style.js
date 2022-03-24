@@ -6,13 +6,13 @@ const useStyles = makeStyles((theme) => ({
     border: "0.05rem solid black",
     borderRadius: "0.5rem",
     padding: "0.5rem",
-    position: "fixed",
-    width: "calc(100% - 25rem)",
+    // position: "fixed",
+    width: "calc(100% - 2rem)",
     bottom: 0,
     minWidth: "22rem",
   },
   editable: {
-    maxHeight: "30rem",
+    maxHeight: "25rem",
     overflow: "auto",
   },
   divider: {

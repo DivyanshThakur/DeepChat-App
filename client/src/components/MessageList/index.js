@@ -1,44 +1,47 @@
+import { Avatar, Box } from "@material-ui/core";
+import { format } from "date-fns";
 import React from "react";
-import IconButton from "@material-ui/core/IconButton";
-import InfoIcon from "@material-ui/icons/Info";
-import { Avatar } from "@material-ui/core";
-import { useSelector } from "react-redux";
-import Compose from "../Compose";
-import Toolbar from "../Toolbar";
-import "./MessageList.css";
-import { useGetChatsQuery } from "../../redux/api/chat";
-import ScrollableChat from "../ScrollableChat";
+import ReactMarkdown from "react-markdown";
+import FileMessage from "../FileMessage";
+import useStyles from "./style";
 
-export default function MessageList() {
-  const chatId = useSelector((state) => state.selectedChat.chatId);
-  const chat = useGetChatsQuery(undefined, {
-    selectFromResult: ({ data }) => data?.find(({ _id }) => _id === chatId),
-  });
+const MessageList = ({ data, user }) => {
+  const classes = useStyles();
 
-  return (
-    <div className="message-list">
-      <Toolbar
-        title={chat.name}
-        leftItems={[
+  return data?.map((message, index) => {
+    return (
+      <Box key={message._id} className={classes.root}>
+        <div>
           <Avatar
-            style={{
-              border: "0.05rem solid black",
-              height: "2.8rem",
-              width: "2.8rem",
-            }}
-            key={38}
-            alt={chat.name}
-            src={chat.avatar}
-          />,
-        ]}
-        rightItems={[
-          <IconButton key="233" color="primary">
-            <InfoIcon />
-          </IconButton>,
-        ]}
-      />
-      <ScrollableChat chatId={chatId} />
-      <Compose chatId={chatId} />
-    </div>
-  );
-}
+            className={classes.avatar}
+            src={message.sender.avatar}
+            // style={{
+            //   visibility:
+            //     index === 0 ||
+            //     data[index].sender._id !== data[index - 1].sender._id
+            //       ? "visible"
+            //       : "hidden",
+            // }}
+          />
+        </div>
+        <div className={classes.messageBox}>
+          <ReactMarkdown
+            className={`${classes.markdown} ${
+              message.sender._id === user._id && classes.user
+            }`}
+            style={{ flex: 1 }}
+            linkTarget="_blank"
+          >
+            {message.content}
+          </ReactMarkdown>
+          {message?.files?.length > 0 && <FileMessage data={message.files} />}
+          <div className={classes.date}>
+            {format(new Date(message.createdAt), "PPp")}
+          </div>
+        </div>
+      </Box>
+    );
+  });
+};
+
+export default MessageList;

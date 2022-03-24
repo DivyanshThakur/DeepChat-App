@@ -4,6 +4,7 @@ import User from "../models/User.js";
 import Chat from "../models/Chat.js";
 import ErrorResponse from "../utils/ErrorResponse.js";
 import { uploadFile } from "../utils/fileUpload.js";
+import { isSameDay } from "date-fns";
 
 /**
  * @desc Send Message
@@ -63,8 +64,36 @@ export const getAllMessages = asyncHandler(async (req, res) => {
     .populate("sender", "name avatar email")
     .populate("chat");
 
+  if (!messages || messages.length === 0) {
+    return res.json({ success: true, data: { user: req.user, list: [] } });
+  }
+
+  const list = [];
+  let prevDate = messages[0].createdAt;
+  let sameDayMessages = [];
+
+  for (var i = 0; i < messages.length; i++) {
+    if (isSameDay(prevDate, messages[i].createdAt)) {
+      sameDayMessages.push(messages[i]);
+    } else {
+      list.push({
+        date: prevDate,
+        messages: sameDayMessages,
+      });
+      sameDayMessages = [messages[i]];
+      prevDate = messages[i].createdAt;
+    }
+  }
+  list.push({
+    date: prevDate,
+    messages: sameDayMessages,
+  });
+
   res.json({
     success: true,
-    data: messages,
+    data: {
+      user: req.user,
+      list,
+    },
   });
 });

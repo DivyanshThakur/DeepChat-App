@@ -57,7 +57,9 @@ const Compose = ({ chatId }) => {
 
   const [sendMessageToServer, { isLoading }] = useSendMessageMutation();
 
-  const [value, setValue] = useState(initialValue);
+  const [value, setValue] = useState(
+    JSON.parse(localStorage.getItem("content")) || initialValue
+  );
   const [target, setTarget] = useState();
   const [search, setSearch] = useState("");
   const [index, setIndex] = useState(0);
@@ -196,10 +198,6 @@ const Compose = ({ chatId }) => {
               }
             }
 
-            if (isHotkey("mod+Enter", event)) {
-              sendMessage();
-            }
-
             if (target || showMentionList) {
               switch (event.key) {
                 case "ArrowDown":
@@ -253,7 +251,16 @@ const Compose = ({ chatId }) => {
           <Divider className={classes.divider} />
           <div style={{ position: "relative" }}>
             <IconButton
-              onMouseDown={() => setShowEmoji(!showEmoji)}
+              onMouseDown={() => {
+                console.log("hi");
+                const event = new KeyboardEvent("keydown", {
+                  key: "s",
+                  code: "KeyS",
+                  ctrlKey: true,
+                });
+
+                document.dispatchEvent(event);
+              }}
               size="small"
             >
               <InsertEmoticonIcon />
@@ -543,13 +550,13 @@ const Emoji = ({ attributes, children, element }) => {
     <span
       {...attributes}
       contentEditable={false}
-      data-cy={`emoji-${element.character.replace(" ", "-")}`}
-      style={{
-        padding: "3px 3px 2px",
-        margin: "0 1px",
-        verticalAlign: "baseline",
-        display: "inline-block",
-      }}
+      // data-cy={`emoji-${element.character.replace(" ", "-")}`}
+      // style={{
+      //   padding: "3px 3px 2px",
+      //   margin: "0 1px",
+      //   verticalAlign: "baseline",
+      //   display: "inline-block",
+      // }}
     >
       {element.character}
       {children}
@@ -636,7 +643,7 @@ const MarkButton = ({ format, icon: MuiIcon, onMouseDown: omd }) => {
   );
 };
 
-const initialValue = JSON.parse(localStorage.getItem("content")) || [
+const initialValue = [
   {
     type: "paragraph",
     children: [{ text: "" }],

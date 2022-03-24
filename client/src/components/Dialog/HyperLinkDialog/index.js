@@ -53,7 +53,10 @@ const HyperLinkDialog = ({ onClose, onSave, ...props }) => {
       </DialogContent>
       <DialogActions>
         <UpdateButtonGroup
-          handleOnSubmit={() => onSave(data)}
+          handleOnSubmit={() => {
+            handleOnClose();
+            onSave(data);
+          }}
           handleOnClose={handleOnClose}
           disabled={data.url.trim() === "" || data.text.trim() === ""}
         />
