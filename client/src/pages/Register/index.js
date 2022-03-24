@@ -40,7 +40,7 @@ const Register = () => {
     },
     validationSchema: validationSchema,
     onSubmit: protectedHandler(async (values) => {
-      const data = await register(values).unwrap();
+      const data = await register({ ...values, image: avatar }).unwrap();
 
       saveUserAuth(data);
 
