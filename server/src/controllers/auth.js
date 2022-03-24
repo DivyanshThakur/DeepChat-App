@@ -6,7 +6,7 @@ import sendEmail from "../services/email.js";
 import User from "../models/User.js";
 import config from "../config/index.js";
 import { DEFAULT_AVATAR_URL } from "../utils/constants.js";
-import {imageUpload} from "../utils/fileUpload.js";
+import { imageUpload } from "../utils/fileUpload.js";
 
 /**
  * @desc User Login
@@ -18,7 +18,10 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   const errorMessage = "Invalid email or password";
 
-  const user = await User.findOne({ email }, "avatar email password tokenVersion");
+  const user = await User.findOne(
+    { email },
+    "avatar email password tokenVersion"
+  );
 
   if (!user) {
     throw new ErrorResponse(errorMessage, 401);
@@ -61,7 +64,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   let avatar;
 
   if (image) {
-    const result = await imageUpload(image)
+    const result = await imageUpload(image);
     avatar = result.secure_url;
   } else {
     avatar = DEFAULT_AVATAR_URL;
