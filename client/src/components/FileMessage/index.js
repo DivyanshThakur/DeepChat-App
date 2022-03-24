@@ -1,9 +1,9 @@
 import { Box } from "@material-ui/core";
 import React from "react";
-import useStyles from "./style";
+// import useStyles from "./style";
 
 const FileMessage = ({ data }) => {
-  const classes = useStyles();
+//   const classes = useStyles();
 
   return <Box>FileMessage</Box>;
 };
