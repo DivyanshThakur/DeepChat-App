@@ -1,4 +1,10 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import isHotkey from "is-hotkey";
 import {
   Editable,
@@ -79,14 +85,18 @@ const Compose = ({ chatId }) => {
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
   const inputFile = useRef(null);
-  const editorRef = useRef();
 
-  if (!editorRef.current)
-    editorRef.current = withLinks(
-      withEmojis(withMentions(withHistory(withReact(createEditor()))))
-    );
+  const editor = useMemo(
+    () =>
+      withLinks(
+        withEmojis(withMentions(withHistory(withReact(createEditor()))))
+      ),
+    []
+  );
 
-  const editor = editorRef.current;
+  useEffect(() => {
+    setValue();
+  }, [editor]);
 
   const chars = CHARACTERS.filter((c) =>
     c.toLowerCase().startsWith(search.toLowerCase())
@@ -114,8 +124,7 @@ const Compose = ({ chatId }) => {
     formData.append("content", markdown);
     formData.append("chatId", chatId);
 
-    const message = await sendMessageToServer(formData).unwrap();
-    console.log("message", message);
+    await sendMessageToServer(formData).unwrap();
 
     Transforms.delete(editor, {
       at: {
@@ -123,8 +132,6 @@ const Compose = ({ chatId }) => {
         focus: Editor.end(editor, []),
       },
     });
-    const content = JSON.stringify(initialValue);
-    localStorage.setItem(`content-${chatId}`, content);
   });
 
   return (
@@ -134,10 +141,13 @@ const Compose = ({ chatId }) => {
         value={value}
         onChange={(value) => {
           setValue(value);
+
           const { selection } = editor;
           if (selection && Range.isCollapsed(selection)) {
             const [start] = Range.edges(selection);
-            const wordBefore = Editor.before(editor, start, { unit: "word" });
+            const wordBefore = Editor.before(editor, start, {
+              unit: "word",
+            });
             const before = wordBefore && Editor.before(editor, wordBefore);
             const beforeRange = before && Editor.range(editor, before, start);
             const beforeText =

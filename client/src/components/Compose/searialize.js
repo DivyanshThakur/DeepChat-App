@@ -34,8 +34,9 @@ const serialize = (node) => {
       return `<ol>${children}</ol>`;
     case "paragraph":
       return `<p>${children}</p>`;
+    case "mention":
+      return `<span>@${node.character}</span>`;
     case "emoji":
-      console.log(node);
       return `<span>${node.character}</span>`;
     case "link":
       return `<a href="${escapeHtml(
