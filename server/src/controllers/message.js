@@ -2,6 +2,8 @@ import asyncHandler from "express-async-handler";
 import Message from "../models/Message.js";
 import User from "../models/User.js";
 import Chat from "../models/Chat.js";
+import ErrorResponse from "../utils/ErrorResponse.js";
+import { uploadFile } from "../utils/fileUpload.js";
 
 /**
  * @desc Send Message
@@ -9,23 +11,35 @@ import Chat from "../models/Chat.js";
  * @access Private
  */
 export const sendMessage = asyncHandler(async (req, res) => {
-  const { content, type, chatId } = req.body;
+  const { content, chatId } = req.body;
+  const files = req.files;
 
-  if (!content || !type || !chatId) {
+  if (!content || !chatId) {
     throw new Error("Invalid data passed into request");
   }
 
   const newMessage = {
     sender: req.user._id,
     content: content,
-    contentType: type,
     chat: chatId,
   };
 
+  if (files && files.length > 0) {
+    const fileUrls = [];
+    for (var i = 0; i < files.length; i++) {
+      const { Location } = await uploadFile(files[i]);
+      fileUrls.push(Location);
+    }
+
+    newMessage.files = fileUrls;
+  }
+
   let message = await Message.create(newMessage);
 
-  message = await message.populate("sender", "name avatar").execPopulate();
-  message = await message.populate("chat").execPopulate();
+  message = await Message.findById(message._id)
+    .populate("sender", "name avatar")
+    .populate("chat");
+
   message = await User.populate(message, {
     path: "chat.users",
     select: "name avatar email",

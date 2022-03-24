@@ -77,9 +77,7 @@ const NewGroupChatDialog = ({ handleClose, ...props }) => {
       name: groupName.trim(),
       users: selectedUsers.map(({ _id }) => _id),
     };
-    console.log(data);
     const groupChat = await createGroup(data).unwrap();
-    console.log(groupChat);
     dispatch(setChatId(groupChat._id));
     handleOnClose();
   });

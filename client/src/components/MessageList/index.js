@@ -6,25 +6,39 @@ import { useSelector } from "react-redux";
 import Compose from "../Compose";
 import Toolbar from "../Toolbar";
 import "./MessageList.css";
+import { useGetChatsQuery } from "../../redux/api/chat";
+import ScrollableChat from "../ScrollableChat";
 
 export default function MessageList() {
   const chatId = useSelector((state) => state.selectedChat.chatId);
-  console.log(chatId);
+  const chat = useGetChatsQuery(undefined, {
+    selectFromResult: ({ data }) => data?.find(({ _id }) => _id === chatId),
+  });
 
   return (
     <div className="message-list">
       <Toolbar
-        title="Conversation Title"
-        leftItems={[<Avatar alt="User Avatar" src="" />]}
+        title={chat.name}
+        leftItems={[
+          <Avatar
+            style={{
+              border: "0.05rem solid black",
+              height: "2.8rem",
+              width: "2.8rem",
+            }}
+            key={38}
+            alt={chat.name}
+            src={chat.avatar}
+          />,
+        ]}
         rightItems={[
-          <IconButton color="primary">
+          <IconButton key="233" color="primary">
             <InfoIcon />
           </IconButton>,
         ]}
       />
-      <div className="message-list-container"></div>
-      {/* <img src="https://drive.google.com/uc?export=view&id=1L9ab_xjbqvG-ncKoR8wDamQkwIatq4Ka" /> */}
-      <Compose />
+      <ScrollableChat chatId={chatId} />
+      <Compose chatId={chatId} />
     </div>
   );
 }

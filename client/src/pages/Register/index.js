@@ -40,10 +40,14 @@ const Register = () => {
     },
     validationSchema: validationSchema,
     onSubmit: protectedHandler(async (values) => {
-      const data = await register({
-        ...values,
-        image: avatar,
-      }).unwrap();
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("email", values.email);
+      formData.append("password", values.password);
+      formData.append("confirmPassword", values.confirmPassword);
+      formData.append("avatar", avatar);
+
+      const data = await register(formData).unwrap();
 
       saveUserAuth(data);
 

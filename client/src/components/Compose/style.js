@@ -9,6 +9,7 @@ const useStyles = makeStyles((theme) => ({
     position: "fixed",
     width: "calc(100% - 25rem)",
     bottom: 0,
+    minWidth: "22rem",
   },
   editable: {
     maxHeight: "30rem",

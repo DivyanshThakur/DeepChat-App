@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import { v2 as cloudinary } from "cloudinary";
 import asyncHandler from "express-async-handler";
 import crypto from "crypto";
 import ErrorResponse from "../utils/ErrorResponse.js";
@@ -7,12 +6,7 @@ import sendEmail from "../services/email.js";
 import User from "../models/User.js";
 import config from "../config/index.js";
 import { DEFAULT_AVATAR_URL } from "../utils/constants.js";
-
-cloudinary.config({
-  cloud_name: config.CLOUDINARY_NAME,
-  api_key: config.CLOUDINARY_API_KEY,
-  api_secret: config.CLOUDINARY_API_SECRET,
-});
+import {imageUpload} from "../utils/fileUpload.js";
 
 /**
  * @desc User Login
@@ -67,10 +61,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   let avatar;
 
   if (image) {
-    const result = await cloudinary.uploader.upload(image, {
-      upload_preset: "deepchat",
-    });
-
+    const result = await imageUpload(image)
     avatar = result.secure_url;
   } else {
     avatar = DEFAULT_AVATAR_URL;

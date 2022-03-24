@@ -53,10 +53,10 @@ export default function ConversationList() {
     <div className="conversation-list">
       <Toolbar
         title="DeepChats"
-        leftItems={[<Avatar alt="User Avatar" src={avatar} />]}
+        leftItems={[<Avatar key="1" alt="User Avatar" src={avatar} />]}
         rightItems={[
-          <MenuButton />,
-          <IconButton color="primary" onClick={() => setOpen(1)}>
+          <MenuButton key={22} />,
+          <IconButton key={234} color="primary" onClick={() => setOpen(1)}>
             <AddIcon />
           </IconButton>,
         ]}

@@ -4,6 +4,7 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import { Box } from "@material-ui/core";
+// import ReactMarkdown from "react-markdown";
 import useStyles from "./style";
 
 const ConversationListItem = ({ data, select, onSelect }) => {
@@ -21,9 +22,11 @@ const ConversationListItem = ({ data, select, onSelect }) => {
         <Typography component="p" className={classes.name}>
           {data.name}
         </Typography>
-        <Typography component="p" className={classes.email}>
-          {data.email}
-        </Typography>
+        {/* <ReactMarkdown
+        className={classes.md}
+        >
+          {data?.latestMessage?.content?.split('\n')[0]}
+        </ReactMarkdown> */}
       </Box>
     </ListItem>
   );

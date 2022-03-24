@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     overflow: "hidden",
     textOverflow: "ellipsis",
   },
-  email: {
+  md: {
     fontSize: "0.8rem",
     color: "rgba(0, 0, 0, .7)",
     whiteSpace: "nowrap",

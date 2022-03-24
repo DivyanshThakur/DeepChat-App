@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import isHotkey from "is-hotkey";
 import {
   Editable,
@@ -7,7 +7,6 @@ import {
   Slate,
   useSelected,
   useFocused,
-  ReactEditor,
 } from "slate-react";
 import {
   Editor,
@@ -25,17 +24,23 @@ import FormatListBulletedIcon from "@material-ui/icons/FormatListBulleted";
 import FormatListNumberedIcon from "@material-ui/icons/FormatListNumbered";
 import LinkIcon from "@material-ui/icons/Link";
 import CodeIcon from "@material-ui/icons/Code";
-import { Button as MuiButton } from "@material-ui/core";
-import { Button, Icon, Toolbar } from "./components";
-// import { BsCodeSquare } from "react-icons/bs";
-import useStyles from "./style";
+import EmojiPicker from "emoji-picker-react";
+// import IntegrationInstructionsIcon from "@mui/icons-material/IntegrationInstructions";
 import { Box, Divider, IconButton } from "@material-ui/core";
 import InsertEmoticonIcon from "@material-ui/icons/InsertEmoticon";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import AlternateEmailIcon from "@material-ui/icons/AlternateEmail";
 import SendIcon from "@material-ui/icons/Send";
+import { Button, Icon, Toolbar } from "./components";
+import useStyles from "./style";
 import "./Compose.css";
-import EmojiPicker from "emoji-picker-react";
+import FileList from "./FileList";
+import HyperLinkDialog from "../Dialog/HyperLinkDialog";
+import serialize from "./searialize";
+import protectedHandler from "../../utils/protectedHandler";
+import { useSendMessageMutation } from "../../redux/api/message";
+import LoadingIconButton from "../button/LoadingIconButton";
+import { NodeHtmlMarkdown } from "node-html-markdown";
 
 const HOTKEYS = {
   "mod+b": "bold",
@@ -47,32 +52,73 @@ const HOTKEYS = {
 const LIST_TYPES = ["numbered-list", "bulleted-list"];
 const TEXT_ALIGN_TYPES = ["left", "center", "right", "justify"];
 
-const Compose = () => {
+const Compose = ({ chatId }) => {
   const classes = useStyles();
+
+  const [sendMessageToServer, { isLoading }] = useSendMessageMutation();
+
   const [value, setValue] = useState(initialValue);
   const [target, setTarget] = useState();
   const [search, setSearch] = useState("");
   const [index, setIndex] = useState(0);
   const [showEmoji, setShowEmoji] = useState(false);
   const [showMentionList, setShowMentionList] = useState(false);
+  const [files, setFiles] = useState([]);
+  const [openLinkDialog, setOpenLinkDialog] = useState(false);
 
+  const updateSelectedFile = (file, action) => {
+    if (action === "add") {
+      setFiles([...files, file]);
+    } else {
+      setFiles(files.filter(({ name }) => name !== file.name));
+    }
+  };
 
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
   const inputFile = useRef(null);
   const editorRef = useRef();
   if (!editorRef.current)
-    editorRef.current = withEmojis(withMentions(withHistory(withReact(createEditor()))));
+    editorRef.current = withLinks(
+      withEmojis(withMentions(withHistory(withReact(createEditor()))))
+    );
+
   const editor = editorRef.current;
 
   const chars = CHARACTERS.filter((c) =>
     c.toLowerCase().startsWith(search.toLowerCase())
   ).slice(0, 10);
 
-  const onEmojiClick = (event, emojiObject) => {
+  const onEmojiClick = (_event, emojiObject) => {
     setShowEmoji(false);
     insertEmoji(editor, emojiObject.emoji);
   };
+
+  const handleLinkSave = (data) => {
+    setOpenLinkDialog(false);
+    insertHyperLink(editor, data);
+    toggleMark(editor, "link");
+  };
+
+  const sendMessage = protectedHandler(async () => {
+    const html = serialize(editor);
+
+    const markdown = NodeHtmlMarkdown.translate(html);
+
+    const formData = new FormData();
+
+    files.forEach((file) => formData.append("files", file));
+    formData.append("content", markdown);
+    formData.append("chatId", chatId);
+
+    const message = await sendMessageToServer(formData).unwrap();
+    console.log("message", message);
+
+    editor.children = initialValue;
+    setValue(initialValue);
+    const content = JSON.stringify(initialValue);
+    localStorage.setItem("content", content);
+  });
 
   return (
     <div className={classes.root}>
@@ -103,6 +149,15 @@ const Compose = () => {
             }
           }
 
+          const isAstChange = editor.operations.some(
+            (op) => "set_selection" !== op.type
+          );
+          if (isAstChange) {
+            // Save the value to Local Storage.
+            const content = JSON.stringify(value);
+            localStorage.setItem("content", content);
+          }
+
           setTarget(null);
         }}
       >
@@ -111,7 +166,11 @@ const Compose = () => {
           <MarkButton format="italic" icon={FormatItalicIcon} />
           <MarkButton format="strike" icon={StrikethroughSIcon} />
           <Divider className={classes.divider} />
-          <MarkButton format="link" icon={LinkIcon} />
+          <MarkButton
+            onMouseDown={() => setOpenLinkDialog(true)}
+            format="link"
+            icon={LinkIcon}
+          />
           <Divider className={classes.divider} />
           <BlockButton format="numbered-list" icon={FormatListNumberedIcon} />
           <BlockButton format="bulleted-list" icon={FormatListBulletedIcon} />
@@ -119,7 +178,7 @@ const Compose = () => {
           <BlockButton format="block-quote" icon={FormatQuoteIcon} />
           <Divider className={classes.divider} />
           <MarkButton format="code" icon={CodeIcon} />
-          {/* <MarkButton format="codeblock" icon={BsCodeSquare} /> */}
+          {/* <MarkButton format="codeblock" icon={IntegrationInstructionsIcon} /> */}
         </Toolbar>
         <Editable
           className={classes.editable}
@@ -135,6 +194,10 @@ const Compose = () => {
                 const mark = HOTKEYS[hotkey];
                 toggleMark(editor, mark);
               }
+            }
+
+            if (isHotkey("mod+Enter", event)) {
+              sendMessage();
             }
 
             if (target || showMentionList) {
@@ -168,7 +231,10 @@ const Compose = () => {
             }
           }}
         />
-
+        <FileList
+          files={files}
+          onDelete={(file) => updateSelectedFile(file, "delete")}
+        />
         <Box display="flex">
           <IconButton
             size="small"
@@ -179,13 +245,17 @@ const Compose = () => {
               id="file"
               ref={inputFile}
               style={{ display: "none" }}
+              onChange={(e) => updateSelectedFile(e.target.files[0], "add")}
             />
 
             <AddCircleOutlineIcon />
           </IconButton>
           <Divider className={classes.divider} />
           <div style={{ position: "relative" }}>
-            <IconButton onMouseDown={() => setShowEmoji(true)} size="small">
+            <IconButton
+              onMouseDown={() => setShowEmoji(!showEmoji)}
+              size="small"
+            >
               <InsertEmoticonIcon />
             </IconButton>
             <div
@@ -200,7 +270,7 @@ const Compose = () => {
               size="small"
               onMouseDown={(event) => {
                 event.preventDefault();
-                setShowMentionList(true);
+                setShowMentionList(!showMentionList);
               }}
             >
               <AlternateEmailIcon />
@@ -240,16 +310,23 @@ const Compose = () => {
               </div>
             )}
           </div>
-          <MuiButton
+          <LoadingIconButton
             size="small"
             variant="contained"
             color="primary"
             className={classes.sendButton}
-            startIcon={<SendIcon />}
+            icon={<SendIcon />}
+            onClick={sendMessage}
+            isLoading={isLoading}
           >
             Send
-          </MuiButton>
+          </LoadingIconButton>
         </Box>
+        <HyperLinkDialog
+          open={openLinkDialog}
+          onClose={() => setOpenLinkDialog(false)}
+          onSave={handleLinkSave}
+        />
       </Slate>
     </div>
   );
@@ -335,7 +412,6 @@ const withMentions = (editor) => {
   return editor;
 };
 
-
 const withEmojis = (editor) => {
   const { isInline, isVoid } = editor;
 
@@ -348,6 +424,30 @@ const withEmojis = (editor) => {
   };
 
   return editor;
+};
+
+const withLinks = (editor) => {
+  const { isInline, isVoid } = editor;
+
+  editor.isInline = (element) => {
+    return element.type === "link" ? true : isInline(element);
+  };
+
+  editor.isVoid = (element) => {
+    return element.type === "link" ? true : isVoid(element);
+  };
+
+  return editor;
+};
+
+const insertHyperLink = (editor, { url, text }) => {
+  const hyperlink = {
+    type: "link",
+    url,
+    children: [{ text }],
+  };
+  Transforms.insertNodes(editor, hyperlink);
+  Transforms.move(editor);
 };
 
 const insertMention = (editor, character) => {
@@ -400,8 +500,10 @@ const Element = (props) => {
       );
     case "mention":
       return <Mention {...props} />;
-      case "emoji":
-        return <Emoji {...props} />;
+    case "emoji":
+      return <Emoji {...props} />;
+    case "link":
+      return <Link {...props} />;
     default:
       return (
         <p style={style} {...attributes}>
@@ -436,7 +538,6 @@ const Mention = ({ attributes, children, element }) => {
   );
 };
 
-
 const Emoji = ({ attributes, children, element }) => {
   return (
     <span
@@ -451,6 +552,25 @@ const Emoji = ({ attributes, children, element }) => {
       }}
     >
       {element.character}
+      {children}
+    </span>
+  );
+};
+
+const Link = ({ attributes, children, element }) => {
+  return (
+    <span
+      {...attributes}
+      onClick={(e) => {
+        const linkElement = document.createElement("a");
+        if (linkElement && e.ctrlKey) {
+          const href = element.url;
+          window.open(href, "_blank");
+        }
+      }}
+      style={{ color: "blue", textDecoration: "underline", cursor: "pointer" }}
+    >
+      {element.children[0].text}
       {children}
     </span>
   );
@@ -497,33 +617,29 @@ const BlockButton = ({ format, icon: MuiIcon }) => {
   );
 };
 
-const MarkButton = ({ format, icon: MuiIcon }) => {
+const MarkButton = ({ format, icon: MuiIcon, onMouseDown: omd }) => {
   const editor = useSlate();
   return (
     <Button
       active={isMarkActive(editor, format)}
-      onMouseDown={(event) => {
-        event.preventDefault();
-        toggleMark(editor, format);
-      }}
+      onMouseDown={
+        omd
+          ? omd
+          : (event) => {
+              event.preventDefault();
+              toggleMark(editor, format);
+            }
+      }
     >
       <Icon>{<MuiIcon />}</Icon>
     </Button>
   );
 };
 
-const initialValue = [
+const initialValue = JSON.parse(localStorage.getItem("content")) || [
   {
     type: "paragraph",
-    children: [
-      { text: "This is editable " },
-      { text: "rich", bold: true },
-      { text: " text, " },
-      { text: "much", italic: true },
-      { text: " better than a " },
-      { text: "<textarea>", code: true },
-      { text: "!" },
-    ],
+    children: [{ text: "" }],
   },
 ];
 
