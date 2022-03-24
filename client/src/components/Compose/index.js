@@ -58,7 +58,7 @@ const Compose = ({ chatId }) => {
   const [sendMessageToServer, { isLoading }] = useSendMessageMutation();
 
   const [value, setValue] = useState(
-    JSON.parse(localStorage.getItem("content")) || initialValue
+    JSON.parse(localStorage.getItem(`content-${chatId}`)) || initialValue
   );
   const [target, setTarget] = useState();
   const [search, setSearch] = useState("");
@@ -80,6 +80,7 @@ const Compose = ({ chatId }) => {
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
   const inputFile = useRef(null);
   const editorRef = useRef();
+
   if (!editorRef.current)
     editorRef.current = withLinks(
       withEmojis(withMentions(withHistory(withReact(createEditor()))))
@@ -116,10 +117,14 @@ const Compose = ({ chatId }) => {
     const message = await sendMessageToServer(formData).unwrap();
     console.log("message", message);
 
-    editor.children = initialValue;
-    setValue(initialValue);
+    Transforms.delete(editor, {
+      at: {
+        anchor: Editor.start(editor, []),
+        focus: Editor.end(editor, []),
+      },
+    });
     const content = JSON.stringify(initialValue);
-    localStorage.setItem("content", content);
+    localStorage.setItem(`content-${chatId}`, content);
   });
 
   return (
@@ -157,7 +162,7 @@ const Compose = ({ chatId }) => {
           if (isAstChange) {
             // Save the value to Local Storage.
             const content = JSON.stringify(value);
-            localStorage.setItem("content", content);
+            localStorage.setItem(`content-${chatId}`, content);
           }
 
           setTarget(null);
@@ -251,16 +256,7 @@ const Compose = ({ chatId }) => {
           <Divider className={classes.divider} />
           <div style={{ position: "relative" }}>
             <IconButton
-              onMouseDown={() => {
-                console.log("hi");
-                const event = new KeyboardEvent("keydown", {
-                  key: "s",
-                  code: "KeyS",
-                  ctrlKey: true,
-                });
-
-                document.dispatchEvent(event);
-              }}
+              onMouseDown={() => setShowEmoji(!showEmoji)}
               size="small"
             >
               <InsertEmoticonIcon />
@@ -550,13 +546,13 @@ const Emoji = ({ attributes, children, element }) => {
     <span
       {...attributes}
       contentEditable={false}
-      // data-cy={`emoji-${element.character.replace(" ", "-")}`}
-      // style={{
-      //   padding: "3px 3px 2px",
-      //   margin: "0 1px",
-      //   verticalAlign: "baseline",
-      //   display: "inline-block",
-      // }}
+      data-cy={`emoji-${element.character.replace(" ", "-")}`}
+      style={{
+        padding: "3px 3px 2px",
+        margin: "0 1px",
+        verticalAlign: "baseline",
+        display: "inline-block",
+      }}
     >
       {element.character}
       {children}

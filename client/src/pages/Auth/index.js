@@ -28,7 +28,7 @@ const Auth = () => {
           <Box display="flex" justifyContent="center">
             <img
               src={ChatLogo}
-              alt="History Diaries Logo"
+              alt="DeepChat App Logo"
               className={classes.logo}
             />
             <Box className={classes.appNameBox}>

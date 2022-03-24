@@ -8,20 +8,13 @@ import useStyles from "./style";
 const MessageList = ({ data, user }) => {
   const classes = useStyles();
 
-  return data?.map((message, index) => {
+  return data?.map((message) => {
     return (
       <Box key={message._id} className={classes.root}>
         <div>
           <Avatar
             className={classes.avatar}
             src={message.sender.avatar}
-            // style={{
-            //   visibility:
-            //     index === 0 ||
-            //     data[index].sender._id !== data[index - 1].sender._id
-            //       ? "visible"
-            //       : "hidden",
-            // }}
           />
         </div>
         <div className={classes.messageBox}>

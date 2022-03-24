@@ -14,7 +14,6 @@ const ScrollableChat = ({ chatId }) => {
       list: [],
     },
   } = useGetMessagesQuery(chatId);
-  console.log(data);
 
   const list = data.list;
 
