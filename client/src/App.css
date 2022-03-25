@@ -8,6 +8,19 @@ body {
   min-width: 360px;
 }
 
+p{
+  margin: 0.2rem 0;
+}
+
+
+/* custom react-toastify */
+@media (min-width: 600px) {
+  .Toastify__toast {
+    border-radius: 0.75rem;
+    font-family: Itim;
+  }
+}
+
 /* custom scrollbar */
 ::-webkit-scrollbar {
   width: 1.25rem;

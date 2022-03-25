@@ -3,21 +3,33 @@ import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles((theme) => ({
   root: {
     margin: "1rem",
-    border: "0.05rem solid black",
-    borderRadius: "0.5rem",
-    padding: "0.5rem",
-    // position: "fixed",
+    marginBottom: "1.5rem",
+    border: "0.01rem solid rgba(0,0,0,0.1)",
+    padding: "0.7rem",
     width: "calc(100% - 2rem)",
-    bottom: 0,
+    maxWidth: "calc(100vw - 24rem)",
     minWidth: "22rem",
+    // boxShadow: "0 0.2rem 3rem -1.5rem rgba(0,0,0,0.8)",
+    borderRadius: "1.25rem",
+    backgroundImage: `linear-gradient(
+    to right top,
+    #f0f0f0,
+    #f4f4f4,
+    #f7f7f7,
+    #fbfbfb,
+    #ffffff
+  )`,
+    boxShadow: "0 16px 40px -12.125px rgba(0,0,0,0.3)",
   },
   editable: {
     maxHeight: "25rem",
-    overflow: "auto",
+    overflowY: "auto",
+    margin: "0.5rem 0",
+    // overflowX: "none",
   },
   divider: {
     height: "1.5rem",
-    borderLeft: "1px solid black",
+    borderLeft: "1px solid rgba(0,0,0,0.5)",
     margin: "auto 0.4rem",
   },
   sendButton: {

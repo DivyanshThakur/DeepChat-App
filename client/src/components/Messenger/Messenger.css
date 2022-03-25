@@ -37,3 +37,12 @@
   grid-column-start: 2;
   background: white;
 }
+
+
+.message-mention{        
+  margin: 0 0.3rem;
+  vertical-align: baseline;
+  display: inline-block;
+  color:blue;
+  cursor: pointer;
+}

@@ -2,7 +2,7 @@ import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles(() => ({
   root: {
-    height: "22rem",
+    height: "21.2rem",
     marginTop: "1.5rem",
     marginBottom: "0.5rem",
     border: "0.0625rem solid #E5E5E5",

@@ -15,7 +15,7 @@ const serialize = (node) => {
     }
 
     if (node.strike) {
-      string = `<span style={{ textDecoration: "line-through" }}>${string}</span>`;
+      string = `<span style="text-decoration: line-through">${string}</span>`;
     }
 
     return string;
@@ -35,7 +35,7 @@ const serialize = (node) => {
     case "paragraph":
       return `<p>${children}</p>`;
     case "mention":
-      return `<span>@${node.character}</span>`;
+      return `<span class="message-mention">@${node.character}</span>`;
     case "emoji":
       return `<span>${node.character}</span>`;
     case "link":

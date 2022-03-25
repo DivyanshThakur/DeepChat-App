@@ -11,8 +11,11 @@ const selectedChatSlice = createSlice({
     setChatId: (state, { payload }) => {
       state.chatId = payload;
     },
+    resetChatId: (state) => {
+      state.chatId = "";
+    },
   },
 });
 
-export const { setChatId } = selectedChatSlice.actions;
+export const { setChatId, resetChatId } = selectedChatSlice.actions;
 export default selectedChatSlice.reducer;

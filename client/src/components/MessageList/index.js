@@ -1,8 +1,9 @@
-import { Avatar, Box } from "@material-ui/core";
+import { Avatar, Box, Typography } from "@material-ui/core";
 import { format } from "date-fns";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import FileMessage from "../FileMessage";
+import rehypeRaw from "rehype-raw";
 import useStyles from "./style";
 
 const MessageList = ({ data, user }) => {
@@ -12,25 +13,27 @@ const MessageList = ({ data, user }) => {
     return (
       <Box key={message._id} className={classes.root}>
         <div>
-          <Avatar
-            className={classes.avatar}
-            src={message.sender.avatar}
-          />
+          <Avatar className={classes.avatar} src={message.sender.avatar} />
         </div>
-        <div className={classes.messageBox}>
+        <div
+          className={`${classes.messageBox} ${
+            message.sender._id === user._id && classes.user
+          }`}
+        >
+          <div className={classes.messageTitle}>
+            <Typography>{message.sender.name}</Typography>
+            <div className={classes.date}>
+              {format(new Date(message.createdAt), "PPp")}
+            </div>
+          </div>
           <ReactMarkdown
-            className={`${classes.markdown} ${
-              message.sender._id === user._id && classes.user
-            }`}
+            rehypePlugins={[rehypeRaw]}
             style={{ flex: 1 }}
             linkTarget="_blank"
           >
             {message.content}
           </ReactMarkdown>
           {message?.files?.length > 0 && <FileMessage data={message.files} />}
-          <div className={classes.date}>
-            {format(new Date(message.createdAt), "PPp")}
-          </div>
         </div>
       </Box>
     );

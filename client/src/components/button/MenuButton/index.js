@@ -9,9 +9,13 @@ import { useLogoutMutation } from "../../../redux/api/auth";
 import { removeUserAuth } from "../../../utils/userAuth";
 import protectedHandler from "../../../utils/protectedHandler";
 import { CircularProgress } from "@material-ui/core";
+import { useDispatch } from "react-redux";
+import { resetChatId } from "../../../redux/slices/selectedChat";
 
 const MenuButton = () => {
   const [logout, { isLoading = true }] = useLogoutMutation();
+  const dispatch = useDispatch();
+
   const history = useHistory();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -28,6 +32,7 @@ const MenuButton = () => {
   const logoutUser = protectedHandler(async () => {
     await logout().unwrap();
     removeUserAuth();
+    dispatch(resetChatId());
     history.push("/auth/login");
   });
 

@@ -29,7 +29,7 @@ const ScrollableChat = ({ chatId }) => {
       } else if (diff <= 24 * 60 * 60 * 1000) {
         return "Yesterday";
       } else {
-        return format(compDate);
+        return format(compDate, "PPp");
       }
     };
 

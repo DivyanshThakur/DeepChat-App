@@ -5,7 +5,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     // background: "skyblue",
     overflowY: "auto",
-    padding: "1rem",
+    // padding: "1rem",
   },
   container: {
     display: "flex",

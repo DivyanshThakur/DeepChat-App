@@ -46,7 +46,7 @@ import serialize from "./searialize";
 import protectedHandler from "../../utils/protectedHandler";
 import { useSendMessageMutation } from "../../redux/api/message";
 import LoadingIconButton from "../button/LoadingIconButton";
-import { NodeHtmlMarkdown } from "node-html-markdown";
+import notify from "../../utils/notify";
 
 const HOTKEYS = {
   "mod+b": "bold",
@@ -66,6 +66,7 @@ const Compose = ({ chatId }) => {
   const [value, setValue] = useState(
     JSON.parse(localStorage.getItem(`content-${chatId}`)) || initialValue
   );
+
   const [target, setTarget] = useState();
   const [search, setSearch] = useState("");
   const [index, setIndex] = useState(0);
@@ -113,15 +114,27 @@ const Compose = ({ chatId }) => {
     toggleMark(editor, "link");
   };
 
+  const isEditorEmpty = (value) => {
+    if (
+      value.replace(/<(.|\n)*?>/g, "").trim().length === 0 &&
+      !value.includes("<img")
+    ) {
+      return true;
+    }
+    return false;
+  };
+
   const sendMessage = protectedHandler(async () => {
     const html = serialize(editor);
 
-    const markdown = NodeHtmlMarkdown.translate(html);
+    if (isEditorEmpty(html) && files.length === 0) {
+      return notify.error("EmptyText", "Empty text", 3000);
+    }
 
     const formData = new FormData();
 
     files.forEach((file) => formData.append("files", file));
-    formData.append("content", markdown);
+    formData.append("content", html);
     formData.append("chatId", chatId);
 
     await sendMessageToServer(formData).unwrap();
@@ -132,6 +145,8 @@ const Compose = ({ chatId }) => {
         focus: Editor.end(editor, []),
       },
     });
+
+    setFiles([]);
   });
 
   return (
@@ -535,13 +550,12 @@ const Mention = ({ attributes, children, element }) => {
       contentEditable={false}
       data-cy={`mention-${element.character.replace(" ", "-")}`}
       style={{
-        padding: "3px 3px 2px",
-        margin: "0 1px",
+        padding: "0.1rem 0.3rem",
+        margin: "0 0.3rem",
         verticalAlign: "baseline",
         display: "inline-block",
-        borderRadius: "4px",
-        backgroundColor: "#eee",
-        fontSize: "0.9em",
+        color: "blue",
+        borderRadius: "1rem",
         boxShadow: selected && focused ? "0 0 0 2px #B4D5FF" : "none",
       }}
     >
@@ -652,7 +666,7 @@ const MarkButton = ({ format, icon: MuiIcon, onMouseDown: omd }) => {
 const initialValue = [
   {
     type: "paragraph",
-    children: [{ text: "" }],
+    children: [{ text: "Default" }],
   },
 ];
 

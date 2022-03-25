@@ -13,7 +13,8 @@ const ConversationListItem = ({ data, select, onSelect }) => {
     <ListItem
       selected={select === data._id}
       button
-      onClick={() => onSelect(data._id)}
+      onMouseDown={() => onSelect(data._id)}
+      className={classes.root}
     >
       <ListItemAvatar>
         <Avatar className={classes.avatar} src={data.avatar} />
