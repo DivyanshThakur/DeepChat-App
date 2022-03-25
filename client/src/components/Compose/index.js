@@ -95,9 +95,21 @@ const Compose = ({ chatId }) => {
     []
   );
 
-  useEffect(() => {
-    setValue();
-  }, [editor]);
+  // useEffect(() => {
+  //   Transforms.delete(editor, {
+  //     at: {
+  //       anchor: Editor.start(editor, []),
+  //       focus: Editor.end(editor, []),
+  //     },
+  //   });
+  //   return () =>
+  //     Transforms.delete(editor, {
+  //       at: {
+  //         anchor: Editor.start(editor, []),
+  //         focus: Editor.end(editor, []),
+  //       },
+  //     });
+  // }, [editor]);
 
   const chars = CHARACTERS.filter((c) =>
     c.toLowerCase().startsWith(search.toLowerCase())

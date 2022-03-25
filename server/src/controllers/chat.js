@@ -38,7 +38,7 @@ export const accessChat = asyncHandler(async (req, res) => {
     };
     chat = await Chat.create(chatData);
 
-    await chat.populate("users").execPopulate();
+    chat = await Chat.findById(chat._id).populate('users');
   }
 
   res.json({
