@@ -1,7 +1,7 @@
 import express from "express";
 import { createServer } from "http";
-// import { Server } from "socket.io";
-// import cookieParser from "cookie-parser";
+import { Server } from "socket.io";
+import cookieParser from "cookie-parser";
 import consola from "consola";
 import colors from "colors";
 import cors from "cors";
@@ -12,9 +12,9 @@ import config from "./config/index.js";
 // import socketIO from "./utils/socketIO.js";
 import { errorHandler, notFound } from "./middleware/error.js";
 import authRoutes from "./routes/auth.js";
-import userRoutes from './routes/user.js';
-import chatRoutes from './routes/chat.js';
-import messageRoutes from './routes/message.js';
+import userRoutes from "./routes/user.js";
+import chatRoutes from "./routes/chat.js";
+import messageRoutes from "./routes/message.js";
 
 const app = express();
 
@@ -38,7 +38,7 @@ app.use(
     credentials: true,
   })
 );
-// app.use(cookieParser());
+app.use(cookieParser());
 app.use(express.json());
 
 if (config.NODE_ENV === "development") {

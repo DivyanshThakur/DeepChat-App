@@ -678,7 +678,7 @@ const MarkButton = ({ format, icon: MuiIcon, onMouseDown: omd }) => {
 const initialValue = [
   {
     type: "paragraph",
-    children: [{ text: "Default" }],
+    children: [{ text: "" }],
   },
 ];
 
