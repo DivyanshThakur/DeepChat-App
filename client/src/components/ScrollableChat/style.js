@@ -3,9 +3,8 @@ import { makeStyles } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    // background: "skyblue",
     overflowY: "auto",
-    // padding: "1rem",
+    position: "relative",
   },
   container: {
     display: "flex",
@@ -19,6 +18,11 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "4rem",
     alignItems: "center",
     marginBottom: "1rem",
+  },
+  goDown: {
+    position: "fixed",
+    bottom: "11rem",
+    right: "2rem",
   },
 }));
 
