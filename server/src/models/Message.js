@@ -18,6 +18,12 @@ const messageSchema = new Schema(
       ref: CHAT,
       index: true,
     },
+    readBy: [
+      {
+        type: ObjectId,
+        ref: USER,
+      },
+    ],
   },
   {
     timestamps: true,

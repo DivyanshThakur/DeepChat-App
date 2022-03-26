@@ -14,6 +14,7 @@ import NewChatDialog from "../Dialog/NewChatDialog";
 import NewGroupChatDialog from "../Dialog/NewGroupChatDialog";
 import { getUserAuth } from "../../utils/userAuth";
 import { setChatId } from "../../redux/slices/selectedChat";
+// import Notification from "../Notification";
 
 export default function ConversationList() {
   const selectedChatId = useSelector((state) => state.selectedChat.chatId);
@@ -53,9 +54,11 @@ export default function ConversationList() {
     <div className="conversation-list">
       <Toolbar
         title="DeepChats"
+        titleAlign="center"
         leftItems={[<Avatar key="1" alt="User Avatar" src={avatar} />]}
         rightItems={[
           <MenuButton key={22} />,
+          // <Notification key={35} />,
           <IconButton key={234} color="primary" onClick={() => setOpen(1)}>
             <AddIcon />
           </IconButton>,

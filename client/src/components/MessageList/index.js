@@ -21,7 +21,7 @@ const MessageList = ({ data, user }) => {
           }`}
         >
           <div className={classes.messageTitle}>
-            <Typography>{message.sender.name}</Typography>
+            <Typography className={classes.senderName}>{message.sender.name}</Typography>
             <div className={classes.date}>
               {format(new Date(message.createdAt), "p")}
             </div>

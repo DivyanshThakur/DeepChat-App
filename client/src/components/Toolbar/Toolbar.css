@@ -19,12 +19,12 @@
 }
 
 .toolbar-title {
-  margin: 0;
+  margin: 0 0.5rem;
   font-weight: 700;
+  flex: 1;
 }
 
 .left-items, .right-items {
-  flex: 1;
   padding: 10px;
   display: flex;
 }

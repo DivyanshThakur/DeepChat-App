@@ -50,7 +50,7 @@ const ScrollableChat = ({ chatId }) => {
       }
     });
   });
-  
+
   const transitionDuration = {
     enter: theme.transitions.duration.enteringScreen,
     exit: theme.transitions.duration.leavingScreen,
@@ -91,7 +91,10 @@ const ScrollableChat = ({ chatId }) => {
         return (
           <div key={index} className={classes.container}>
             <DateMessage date={messageDayList.date} />
-            <MessageList data={messageDayList.messages} user={data.user} />
+            <MessageList
+              data={messageDayList.messages}
+              user={data.user}
+            />
           </div>
         );
       })}

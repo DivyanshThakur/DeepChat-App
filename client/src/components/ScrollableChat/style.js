@@ -13,11 +13,13 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
   },
   dateMessage: {
-    border: "0.1rem solid black",
+    border: "0.01rem solid rgba(0, 0, 0, 0.1)",
     padding: "0.3rem 1rem",
     borderRadius: "4rem",
     alignItems: "center",
-    marginBottom: "1rem",
+    margin: "2rem 0",
+    background: "#fff",
+    boxShadow: "0 0.4rem 2rem -0.6rem rgba(0, 0, 0, 0.4)",
   },
   goDown: {
     position: "fixed",

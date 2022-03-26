@@ -25,7 +25,7 @@ export default function ChatMessage() {
         leftItems={[
           <Avatar
             style={{
-              border: "0.05rem solid black",
+              border: "0.01rem solid rgba(0, 0, 0, 0.1)",
               height: "2.8rem",
               width: "2.8rem",
             }}

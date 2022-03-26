@@ -23,12 +23,13 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     height: "2.8rem",
     width: "2.8rem",
+    border: "0.01rem solid rgba(0, 0, 0, 0.1)",
   },
   name: {
     fontSize: "1.25rem",
     fontWeight: 500,
     whiteSpace: "nowrap",
-    width: "15rem",
+    width: "16rem",
     overflow: "hidden",
     textOverflow: "ellipsis",
   },
