@@ -3,9 +3,8 @@ import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import axios from "axios";
 import useStyles from "./style";
-// import { useGetMetadataQuery } from "../../redux/api/message";
 
-const LinkPreview = ({ url }) => {
+const LinkPreview = ({ url, scroll }) => {
   const classes = useStyles();
   const [metadata, setMetadata] = useState({});
 
@@ -15,10 +14,11 @@ const LinkPreview = ({ url }) => {
         `${process.env.REACT_APP_SERVER_URL_DEV}/api/messages/meta?link=${url}`
       );
       setMetadata(data.data);
+      scroll();
     };
 
     if (url) getMeta();
-  }, [url]);
+  }, [url, scroll]);
 
   return (
     <a className={classes.root} href={url} target="_blank" rel="noreferrer">
@@ -31,7 +31,9 @@ const LinkPreview = ({ url }) => {
       )}
       <div className={classes.info}>
         <Typography className={classes.title}>{metadata.title}</Typography>
-        <Typography className={classes.description}>{metadata.description}</Typography>
+        <Typography className={classes.description}>
+          {metadata.description}
+        </Typography>
         <Typography className={classes.source}>{metadata.source}</Typography>
       </div>
     </a>

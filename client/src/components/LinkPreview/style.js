@@ -31,6 +31,7 @@ const useStyles = makeStyles(() => ({
     textOverflow: "ellipsis",
     fontSize: "1.2rem",
     fontWeight: 500,
+    fontFamily: "'Catamaran', sans-serif",
   },
   description: {
     overflow: "hidden",

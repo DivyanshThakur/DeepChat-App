@@ -59,7 +59,7 @@ const ScrollableChat = ({ chatId }) => {
   const [showGoDownArrow, setShowGoDownArrow] = useState(false);
 
   const scrollToBottom = () => {
-    scrollableRef.current.scrollToBottom();
+    scrollableRef.current?.scrollToBottom();
   };
 
   const today = startOfToday();
@@ -91,10 +91,7 @@ const ScrollableChat = ({ chatId }) => {
         return (
           <div key={index} className={classes.container}>
             <DateMessage date={messageDayList.date} />
-            <MessageList
-              data={messageDayList.messages}
-              user={data.user}
-            />
+            <MessageList scroll={scrollToBottom} data={messageDayList.messages} user={data.user} />
           </div>
         );
       })}
