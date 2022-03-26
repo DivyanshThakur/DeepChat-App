@@ -8,7 +8,7 @@ import FileMessage from "../FileMessage";
 import useStyles from "./style";
 import LinkPreview from "../LinkPreview";
 
-const MessageList = ({ data, user ,scroll}) => {
+const MessageList = ({ data, user, scroll }) => {
   const classes = useStyles();
 
   return data?.map((message) => {
@@ -35,7 +35,13 @@ const MessageList = ({ data, user ,scroll}) => {
               {format(new Date(message.createdAt), "p")}
             </div>
           </div>
-          {url && <LinkPreview scroll={scroll} url={url} />}
+          {url && (
+            <LinkPreview
+              style={{ height: "6.5rem" }}
+              scroll={scroll}
+              url={url}
+            />
+          )}
           <ReactMarkdown
             rehypePlugins={[rehypeRaw]}
             style={{ flex: 1 }}

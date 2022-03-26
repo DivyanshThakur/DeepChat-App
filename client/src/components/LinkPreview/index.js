@@ -18,6 +18,10 @@ const LinkPreview = ({ url, scroll }) => {
     };
 
     if (url) getMeta();
+
+    return () => {
+      setMetadata({});
+    };
   }, [url, scroll]);
 
   return (
