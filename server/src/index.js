@@ -9,7 +9,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import connectDB from "./config/db.js";
 import config from "./config/index.js";
-// import socketIO from "./utils/socketIO.js";
+import socketIO from "./utils/socketIO.js";
 import { errorHandler, notFound } from "./middleware/error.js";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
@@ -19,14 +19,14 @@ import messageRoutes from "./routes/message.js";
 const app = express();
 
 const httpServer = createServer(app);
-// const options = {
-//   cors: {
-//     origin: [config.CLIENT_DEV, config.DEEPCHAT_APP],
-//     credentials: true,
-//   },
-// };
+const options = {
+  cors: {
+    origin: [config.CLIENT_DEV, config.DEEPCHAT_APP],
+    credentials: true,
+  },
+};
 
-// const io = new Server(httpServer, options);
+const io = new Server(httpServer, options);
 
 connectDB();
 
@@ -58,7 +58,7 @@ app.use(notFound);
 app.use(errorHandler);
 
 /* Socket IO */
-// io.on("connection", socketIO);
+io.on("connection", socketIO);
 
 /* Server */
 const PORT = config.PORT || 5000;

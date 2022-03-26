@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: "1rem",
   },
   markdown: {
-    // marginLeft: "0.7rem",
+    wordBreak: "break-word",
   },
   user: {
     // background: "#0099ff",

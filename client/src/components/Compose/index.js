@@ -47,6 +47,7 @@ import protectedHandler from "../../utils/protectedHandler";
 import { useSendMessageMutation } from "../../redux/api/message";
 import LoadingIconButton from "../button/LoadingIconButton";
 import notify from "../../utils/notify";
+import socket from '../../utils/socket'
 
 const HOTKEYS = {
   "mod+b": "bold",
@@ -95,22 +96,6 @@ const Compose = ({ chatId }) => {
     []
   );
 
-  // useEffect(() => {
-  //   Transforms.delete(editor, {
-  //     at: {
-  //       anchor: Editor.start(editor, []),
-  //       focus: Editor.end(editor, []),
-  //     },
-  //   });
-  //   return () =>
-  //     Transforms.delete(editor, {
-  //       at: {
-  //         anchor: Editor.start(editor, []),
-  //         focus: Editor.end(editor, []),
-  //       },
-  //     });
-  // }, [editor]);
-
   const chars = CHARACTERS.filter((c) =>
     c.toLowerCase().startsWith(search.toLowerCase())
   ).slice(0, 10);
@@ -149,7 +134,9 @@ const Compose = ({ chatId }) => {
     formData.append("content", html);
     formData.append("chatId", chatId);
 
-    await sendMessageToServer(formData).unwrap();
+    const message = await sendMessageToServer(formData).unwrap();
+
+    socket.emit("new-message", message);
 
     Transforms.delete(editor, {
       at: {

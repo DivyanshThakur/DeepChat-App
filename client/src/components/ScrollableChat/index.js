@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "@material-ui/core/styles";
 import ScrollableFeed from "react-scrollable-feed";
 import { format, startOfDay, startOfToday } from "date-fns";
@@ -7,12 +7,50 @@ import useStyles from "./style";
 import MessageList from "../MessageList";
 import { Fab, Zoom } from "@material-ui/core";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import { getUserAuth } from "../../utils/userAuth";
+import socket from "../../utils/socket";
 
 const ScrollableChat = ({ chatId }) => {
   const classes = useStyles();
   const theme = useTheme();
   const scrollableRef = React.createRef();
 
+  const {
+    data = {
+      user: null,
+      list: [],
+    },
+    refetch,
+  } = useGetMessagesQuery(chatId);
+
+  const list = data.list;
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const { userId } = getUserAuth();
+
+    socket.emit("setup", userId);
+
+    socket.on("connected", () => {});
+  }, []);
+
+  useEffect(() => {
+    if (chatId) {
+      socket.emit("join-chat", chatId);
+    }
+  }, [chatId]);
+
+  useEffect(() => {
+    socket.on("message-received", (message) => {
+      if (!chatId || chatId !== message.chat._id) {
+        // send notification
+      } else {
+        refetch();
+      }
+    });
+  });
+  
   const transitionDuration = {
     enter: theme.transitions.duration.enteringScreen,
     exit: theme.transitions.duration.leavingScreen,
@@ -23,15 +61,6 @@ const ScrollableChat = ({ chatId }) => {
   const scrollToBottom = () => {
     scrollableRef.current.scrollToBottom();
   };
-
-  const {
-    data = {
-      user: null,
-      list: [],
-    },
-  } = useGetMessagesQuery(chatId);
-
-  const list = data.list;
 
   const today = startOfToday();
 
@@ -45,7 +74,7 @@ const ScrollableChat = ({ chatId }) => {
       } else if (diff <= 24 * 60 * 60 * 1000) {
         return "Yesterday";
       } else {
-        return format(compDate, "PPp");
+        return format(compDate, "d MMMM yyyy");
       }
     };
 

@@ -23,13 +23,14 @@ const MessageList = ({ data, user }) => {
           <div className={classes.messageTitle}>
             <Typography>{message.sender.name}</Typography>
             <div className={classes.date}>
-              {format(new Date(message.createdAt), "PPp")}
+              {format(new Date(message.createdAt), "p")}
             </div>
           </div>
           <ReactMarkdown
             rehypePlugins={[rehypeRaw]}
             style={{ flex: 1 }}
             linkTarget="_blank"
+            className={classes.markdown}
           >
             {message.content}
           </ReactMarkdown>

@@ -37,6 +37,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     success: true,
     data: {
       avatar: user.avatar,
+      userId: user._id,
       accessToken: user.getAccessToken(),
       expiresAt: Date.now() + parseInt(config.ACCESS_TOKEN_EXPIRE_MS), // 15 min
     },
@@ -85,6 +86,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     success: true,
     data: {
       avatar: user.avatar,
+      userId: user._id,
       accessToken: user.getAccessToken(),
       expiresAt: Date.now() + parseInt(config.ACCESS_TOKEN_EXPIRE_MS), // 15 min
     },

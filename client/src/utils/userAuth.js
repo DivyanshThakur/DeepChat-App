@@ -14,6 +14,7 @@ export const getUserAuth = () => {
 
   const getInitialState = () => ({
     avatar: "",
+    userId: "",
     accessToken: null,
     expiresAt: Date.now(),
   });
