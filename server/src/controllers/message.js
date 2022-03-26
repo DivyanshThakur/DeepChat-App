@@ -5,6 +5,7 @@ import Chat from "../models/Chat.js";
 import ErrorResponse from "../utils/ErrorResponse.js";
 import { uploadFile } from "../utils/fileUpload.js";
 import { isSameDay } from "date-fns";
+import urlMetadata from "url-metadata";
 
 /**
  * @desc Send Message
@@ -55,8 +56,28 @@ export const sendMessage = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @desc Get Meta Data
+ * @route GET /api/messages/meta
+ * @access Private
+ */
+export const getMetaData = asyncHandler(async (req, res) => {
+  const link = req.query.link;
+  const metadata = await urlMetadata(link);
+
+  res.json({
+    success: true,
+    data: {
+      title: metadata.title,
+      image: metadata.image,
+      description: metadata.description,
+      source: metadata.source,
+    },
+  });
+});
+
+/**
  * @desc Get all messages from a chat
- * @route POST /api/messages/:chatId
+ * @route GET /api/messages/:chatId
  * @access Private
  */
 export const getAllMessages = asyncHandler(async (req, res) => {

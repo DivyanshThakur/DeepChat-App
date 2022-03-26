@@ -39,9 +39,9 @@ const serialize = (node) => {
     case "emoji":
       return `<span>${node.character}</span>`;
     case "link":
-      return `<a href="${escapeHtml(
+      return `<a href='${escapeHtml(
         node.url
-      )}" target="_blank" rel="noreferrer">${children}</a>`;
+      )}' target='_blank' rel='noreferrer'>${children}</a>`;
     default:
       return children;
   }

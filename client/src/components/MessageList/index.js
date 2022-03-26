@@ -2,14 +2,21 @@ import { Avatar, Box, Typography } from "@material-ui/core";
 import { format } from "date-fns";
 import React from "react";
 import ReactMarkdown from "react-markdown";
-import FileMessage from "../FileMessage";
 import rehypeRaw from "rehype-raw";
+import FileMessage from "../FileMessage";
+
 import useStyles from "./style";
+import LinkPreview from "../LinkPreview";
 
 const MessageList = ({ data, user }) => {
   const classes = useStyles();
 
   return data?.map((message) => {
+    const doc = document.createElement("html");
+    doc.innerHTML = message.content;
+    const links = doc.getElementsByTagName("a");
+    const url = links.length > 0 ? links[0].getAttribute("href") : null;
+
     return (
       <Box key={message._id} className={classes.root}>
         <div>
@@ -21,11 +28,14 @@ const MessageList = ({ data, user }) => {
           }`}
         >
           <div className={classes.messageTitle}>
-            <Typography className={classes.senderName}>{message.sender.name}</Typography>
+            <Typography className={classes.senderName}>
+              {message.sender.name}
+            </Typography>
             <div className={classes.date}>
               {format(new Date(message.createdAt), "p")}
             </div>
           </div>
+          {url && <LinkPreview url={url} />}
           <ReactMarkdown
             rehypePlugins={[rehypeRaw]}
             style={{ flex: 1 }}

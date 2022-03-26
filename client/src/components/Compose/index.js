@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import isHotkey from "is-hotkey";
 import {
   Editable,
@@ -47,7 +41,7 @@ import protectedHandler from "../../utils/protectedHandler";
 import { useSendMessageMutation } from "../../redux/api/message";
 import LoadingIconButton from "../button/LoadingIconButton";
 import notify from "../../utils/notify";
-import socket from '../../utils/socket'
+import socket from "../../utils/socket";
 
 const HOTKEYS = {
   "mod+b": "bold",
