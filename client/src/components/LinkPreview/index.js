@@ -18,11 +18,19 @@ const LinkPreview = ({ url, scroll }) => {
         }/api/messages/meta?link=${url}`
       );
       setMetadata(data.data);
+      const content = JSON.stringify(data.data);
+      localStorage.setItem(`link-preview-${url}`, content);
       scroll();
     };
 
-    if (url) getMeta();
-
+    if (url) {
+      const data = JSON.parse(localStorage.getItem(`link-preview-${url}`));
+      if (data) {
+        setMetadata(data);
+      } else {
+        getMeta();
+      }
+    }
     return () => {
       setMetadata({});
     };
