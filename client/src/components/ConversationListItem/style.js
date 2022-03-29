@@ -4,18 +4,9 @@ const useStyles = makeStyles((theme) => ({
   root: {
     margin: "0.3rem 0.5rem",
     width: "unset",
-    borderRadius: "4rem",
+    borderRadius: "1rem",
     paddingLeft: "0.5rem",
     paddingRight: "0.5rem",
-    // boxShadow: "0 0.4rem 2rem -1.4rem rgba(0, 0, 0, 0.6)",
-    // background: `linear-gradient(
-    //   to right top,
-    //   #f0f0f0,
-    //   #f4f4f4,
-    //   #f7f7f7,
-    //   #fbfbfb,
-    //   #ffffff
-    // )`,
   },
   userBox: {
     width: "100%",
