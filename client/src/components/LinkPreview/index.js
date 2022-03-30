@@ -3,10 +3,11 @@ import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import axios from "axios";
 import useStyles from "./style";
+import LinkPreviewSkeleton from "../Skeleton/LinkPreview";
 
-const LinkPreview = ({ url, scroll }) => {
+const LinkPreview = ({ url }) => {
   const classes = useStyles();
-  const [metadata, setMetadata] = useState({});
+  const [metadata, setMetadata] = useState(null);
 
   useEffect(() => {
     const getMeta = async () => {
@@ -20,7 +21,6 @@ const LinkPreview = ({ url, scroll }) => {
       setMetadata(data.data);
       const content = JSON.stringify(data.data);
       localStorage.setItem(`link-preview-${url}`, content);
-      scroll();
     };
 
     if (url) {
@@ -32,11 +32,10 @@ const LinkPreview = ({ url, scroll }) => {
       }
     }
     return () => {
-      setMetadata({});
+      setMetadata(null);
     };
-  }, [url, scroll]);
-
-  return (
+  }, [url]);
+  return metadata ? (
     <a className={classes.root} href={url} target="_blank" rel="noreferrer">
       {metadata.image && (
         <Avatar
@@ -53,6 +52,8 @@ const LinkPreview = ({ url, scroll }) => {
         <Typography className={classes.source}>{metadata.source}</Typography>
       </div>
     </a>
+  ) : (
+    <LinkPreviewSkeleton />
   );
 };
 

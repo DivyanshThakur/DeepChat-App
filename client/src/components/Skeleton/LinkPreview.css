@@ -1,0 +1,34 @@
+.link-list-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  height: 8rem;
+}
+
+.link-list-item:hover {
+  background: #eeeef1;
+  cursor: pointer;
+}
+
+.link-info {
+  flex-grow: 1;
+  margin-left: 1rem;
+}
+
+.link-title {
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: capitalize;
+  margin-bottom: 1rem;
+}
+
+.link-snippet {
+  font-size: 14px;
+  display: inline-block;
+  color: #888;
+  margin: 0; 
+  width: 15.5rem;
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -8,7 +8,7 @@ import FileMessage from "../FileMessage";
 import useStyles from "./style";
 import LinkPreview from "../LinkPreview";
 
-const MessageList = ({ data, user, scroll }) => {
+const MessageList = ({ data, user }) => {
   const classes = useStyles();
 
   return data?.map((message) => {
@@ -38,7 +38,6 @@ const MessageList = ({ data, user, scroll }) => {
           {url && (
             <LinkPreview
               style={{ height: "6.5rem" }}
-              scroll={scroll}
               url={url}
             />
           )}

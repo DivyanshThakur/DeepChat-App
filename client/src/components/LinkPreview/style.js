@@ -17,7 +17,6 @@ const useStyles = makeStyles(() => ({
     width: "4rem",
     margin: "1rem",
     marginRight: "0rem",
-    // border: "0.01rem solid rgba(0, 0, 0, 0.4)",
   },
   info: {
     marginLeft: "1rem",

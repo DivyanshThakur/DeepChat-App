@@ -7,7 +7,7 @@ import MessageList from "../MessageList";
 import { getUserAuth } from "../../utils/userAuth";
 import socket from "../../utils/socket";
 
-const ScrollableChat = ({ chatId, scrollableRef,setShowGoDownArrow }) => {
+const ScrollableChat = ({ chatId, scrollableRef, setShowGoDownArrow }) => {
   const classes = useStyles();
 
   const {
@@ -46,10 +46,6 @@ const ScrollableChat = ({ chatId, scrollableRef,setShowGoDownArrow }) => {
     });
   });
 
-  const scrollToBottom = () => {
-    scrollableRef.current?.scrollToBottom();
-  };
-
   const today = startOfToday();
 
   const DateMessage = ({ date }) => {
@@ -79,11 +75,10 @@ const ScrollableChat = ({ chatId, scrollableRef,setShowGoDownArrow }) => {
         return (
           <div key={index} className={classes.container}>
             <DateMessage date={messageDayList.date} />
-            <MessageList scroll={scrollToBottom} data={messageDayList.messages} user={data.user} />
+            <MessageList data={messageDayList.messages} user={data.user} />
           </div>
         );
       })}
-     
     </ScrollableFeed>
   );
 };
