@@ -21,11 +21,6 @@ const useStyles = makeStyles((theme) => ({
     background: "#fff",
     boxShadow: "0 0.4rem 2rem -0.6rem rgba(0, 0, 0, 0.4)",
   },
-  goDown: {
-    position: "fixed",
-    bottom: "11rem",
-    right: "2rem",
-  },
 }));
 
 export default useStyles;

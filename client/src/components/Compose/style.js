@@ -2,6 +2,9 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    position: "relative",
+  },
+  slateContainer: {
     margin: "1rem",
     marginBottom: "1.5rem",
     border: "0.01rem solid rgba(0,0,0,0.1)",

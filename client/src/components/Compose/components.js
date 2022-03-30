@@ -1,26 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { cx, css } from "@emotion/css";
+import { IconButton } from "@material-ui/core";
 
 export const Button = React.forwardRef(
-  ({ className, active, reversed, ...props }, ref) => (
-    <span
+  ({ className, active, reversed, icon, ...props }, ref) => (
+    <IconButton
+      size="small"
       {...props}
       ref={ref}
-      className={cx(
-        className,
-        css`
-          cursor: pointer;
-          color: ${reversed
-            ? active
-              ? "white"
-              : "#aaa"
-            : active
-            ? "black"
-            : "#ccc"};
-        `
-      )}
-    />
+      color={active ? "primary" : "default"}
+    >
+      {icon}
+    </IconButton>
   )
 );
 
@@ -134,6 +126,7 @@ export const Toolbar = React.forwardRef(({ className, ...props }, ref) => (
       className,
       css`
         position: relative;
+        display: flex;
       `
     )}
   />

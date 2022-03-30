@@ -17,7 +17,6 @@ const useStyles = makeStyles((theme) => ({
     margin: "auto 0",
   },
   title: {
-    
     fontSize: "2.6rem",
     fontWeight: 700,
     fontFamily: "cursive",
@@ -36,7 +35,12 @@ const useStyles = makeStyles((theme) => ({
       fontSize: "0.8rem",
     },
   },
- 
+  goDown: {
+    position: "absolute",
+    right: "1.8rem",
+    top: "-2.5rem",
+    zIndex: 3,
+  },
 }));
 
 export default useStyles;

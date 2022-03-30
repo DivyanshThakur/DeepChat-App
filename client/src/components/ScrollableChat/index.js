@@ -1,19 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { useTheme } from "@material-ui/core/styles";
+import React, { useEffect } from "react";
 import ScrollableFeed from "react-scrollable-feed";
 import { format, startOfDay, startOfToday } from "date-fns";
 import { useGetMessagesQuery } from "../../redux/api/message";
 import useStyles from "./style";
 import MessageList from "../MessageList";
-import { Fab, Zoom } from "@material-ui/core";
-import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import { getUserAuth } from "../../utils/userAuth";
 import socket from "../../utils/socket";
 
-const ScrollableChat = ({ chatId }) => {
+const ScrollableChat = ({ chatId, scrollableRef,setShowGoDownArrow }) => {
   const classes = useStyles();
-  const theme = useTheme();
-  const scrollableRef = React.createRef();
 
   const {
     data = {
@@ -50,13 +45,6 @@ const ScrollableChat = ({ chatId }) => {
       }
     });
   });
-
-  const transitionDuration = {
-    enter: theme.transitions.duration.enteringScreen,
-    exit: theme.transitions.duration.leavingScreen,
-  };
-
-  const [showGoDownArrow, setShowGoDownArrow] = useState(false);
 
   const scrollToBottom = () => {
     scrollableRef.current?.scrollToBottom();
@@ -95,16 +83,7 @@ const ScrollableChat = ({ chatId }) => {
           </div>
         );
       })}
-      <Zoom in={showGoDownArrow} timeout={transitionDuration} unmountOnExit>
-        <Fab
-          size="small"
-          className={classes.goDown}
-          color="primary"
-          onClick={() => scrollToBottom()}
-        >
-          <ArrowDownwardIcon />
-        </Fab>
-      </Zoom>
+     
     </ScrollableFeed>
   );
 };

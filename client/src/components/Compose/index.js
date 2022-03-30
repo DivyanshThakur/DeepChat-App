@@ -25,13 +25,12 @@ import FormatListNumberedIcon from "@material-ui/icons/FormatListNumbered";
 import LinkIcon from "@material-ui/icons/Link";
 import CodeIcon from "@material-ui/icons/Code";
 import EmojiPicker from "emoji-picker-react";
-// import IntegrationInstructionsIcon from "@mui/icons-material/IntegrationInstructions";
 import { Box, Divider, IconButton } from "@material-ui/core";
 import InsertEmoticonIcon from "@material-ui/icons/InsertEmoticon";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import AlternateEmailIcon from "@material-ui/icons/AlternateEmail";
 import SendIcon from "@material-ui/icons/Send";
-import { Button, Icon, Toolbar } from "./components";
+import { Button, Toolbar } from "./components";
 import useStyles from "./style";
 import "./Compose.css";
 import FileList from "./FileList";
@@ -53,7 +52,7 @@ const HOTKEYS = {
 const LIST_TYPES = ["numbered-list", "bulleted-list"];
 const TEXT_ALIGN_TYPES = ["left", "center", "right", "justify"];
 
-const Compose = ({ chatId }) => {
+const Compose = ({ chatId, children }) => {
   const classes = useStyles();
 
   const [sendMessageToServer, { isLoading }] = useSendMessageMutation();
@@ -144,211 +143,214 @@ const Compose = ({ chatId }) => {
 
   return (
     <div className={classes.root}>
-      <Slate
-        editor={editor}
-        value={value}
-        onChange={(value) => {
-          setValue(value);
+      {children}
+      <div className={classes.slateContainer}>
+        <Slate
+          editor={editor}
+          value={value}
+          onChange={(value) => {
+            setValue(value);
 
-          const { selection } = editor;
-          if (selection && Range.isCollapsed(selection)) {
-            const [start] = Range.edges(selection);
-            const wordBefore = Editor.before(editor, start, {
-              unit: "word",
-            });
-            const before = wordBefore && Editor.before(editor, wordBefore);
-            const beforeRange = before && Editor.range(editor, before, start);
-            const beforeText =
-              beforeRange && Editor.string(editor, beforeRange);
-            const beforeMatch = beforeText && beforeText.match(/^@(\w+)$/);
-            const after = Editor.after(editor, start);
-            const afterRange = Editor.range(editor, start, after);
-            const afterText = Editor.string(editor, afterRange);
-            const afterMatch = afterText.match(/^(\s|$)/);
+            const { selection } = editor;
+            if (selection && Range.isCollapsed(selection)) {
+              const [start] = Range.edges(selection);
+              const wordBefore = Editor.before(editor, start, {
+                unit: "word",
+              });
+              const before = wordBefore && Editor.before(editor, wordBefore);
+              const beforeRange = before && Editor.range(editor, before, start);
+              const beforeText =
+                beforeRange && Editor.string(editor, beforeRange);
+              const beforeMatch = beforeText && beforeText.match(/^@(\w+)$/);
+              const after = Editor.after(editor, start);
+              const afterRange = Editor.range(editor, start, after);
+              const afterText = Editor.string(editor, afterRange);
+              const afterMatch = afterText.match(/^(\s|$)/);
 
-            if (beforeMatch && afterMatch) {
-              setTarget(beforeRange);
-              setSearch(beforeMatch[1]);
-              setIndex(0);
-              return;
-            }
-          }
-
-          const isAstChange = editor.operations.some(
-            (op) => "set_selection" !== op.type
-          );
-          if (isAstChange) {
-            // Save the value to Local Storage.
-            const content = JSON.stringify(value);
-            localStorage.setItem(`content-${chatId}`, content);
-          }
-
-          setTarget(null);
-        }}
-      >
-        <Toolbar>
-          <MarkButton format="bold" icon={FormatBoldIcon} />
-          <MarkButton format="italic" icon={FormatItalicIcon} />
-          <MarkButton format="strike" icon={StrikethroughSIcon} />
-          <Divider className={classes.divider} />
-          <MarkButton
-            onMouseDown={() => setOpenLinkDialog(true)}
-            format="link"
-            icon={LinkIcon}
-          />
-          <Divider className={classes.divider} />
-          <BlockButton format="numbered-list" icon={FormatListNumberedIcon} />
-          <BlockButton format="bulleted-list" icon={FormatListBulletedIcon} />
-          <Divider className={classes.divider} />
-          <BlockButton format="block-quote" icon={FormatQuoteIcon} />
-          <Divider className={classes.divider} />
-          <MarkButton format="code" icon={CodeIcon} />
-          {/* <MarkButton format="codeblock" icon={IntegrationInstructionsIcon} /> */}
-        </Toolbar>
-        <Editable
-          className={classes.editable}
-          renderElement={renderElement}
-          renderLeaf={renderLeaf}
-          placeholder="DeepChat here..."
-          spellCheck
-          autoFocus
-          onKeyDown={(event) => {
-            for (const hotkey in HOTKEYS) {
-              if (isHotkey(hotkey, event)) {
-                event.preventDefault();
-                const mark = HOTKEYS[hotkey];
-                toggleMark(editor, mark);
+              if (beforeMatch && afterMatch) {
+                setTarget(beforeRange);
+                setSearch(beforeMatch[1]);
+                setIndex(0);
+                return;
               }
             }
 
-            if (target || showMentionList) {
-              switch (event.key) {
-                case "ArrowDown":
-                  event.preventDefault();
-                  const prevIndex = index >= chars.length - 1 ? 0 : index + 1;
-                  setIndex(prevIndex);
-                  break;
-                case "ArrowUp":
-                  event.preventDefault();
-                  const nextIndex = index <= 0 ? chars.length - 1 : index - 1;
-                  setIndex(nextIndex);
-                  break;
-                case "Tab":
-                case "Enter":
-                  event.preventDefault();
-                  Transforms.select(editor, target);
-                  insertMention(editor, chars[index]);
-                  setTarget(null);
-                  setShowMentionList(false);
-                  break;
-                case "Escape":
-                  event.preventDefault();
-                  setTarget(null);
-                  setShowMentionList(false);
-                  break;
-                default:
-                  break;
-              }
+            const isAstChange = editor.operations.some(
+              (op) => "set_selection" !== op.type
+            );
+            if (isAstChange) {
+              // Save the value to Local Storage.
+              const content = JSON.stringify(value);
+              localStorage.setItem(`content-${chatId}`, content);
             }
+
+            setTarget(null);
           }}
-        />
-        <FileList
-          files={files}
-          onDelete={(file) => updateSelectedFile(file, "delete")}
-        />
-        <Box display="flex">
-          <IconButton
-            size="small"
-            onMouseDown={() => inputFile.current.click()}
-          >
-            <input
-              type="file"
-              id="file"
-              ref={inputFile}
-              style={{ display: "none" }}
-              onChange={(e) => updateSelectedFile(e.target.files[0], "add")}
+        >
+          <Toolbar>
+            <MarkButton format="bold" icon={FormatBoldIcon} />
+            <MarkButton format="italic" icon={FormatItalicIcon} />
+            <MarkButton format="strike" icon={StrikethroughSIcon} />
+            <Divider className={classes.divider} />
+            <MarkButton
+              onMouseDown={() => setOpenLinkDialog(true)}
+              format="link"
+              icon={LinkIcon}
             />
+            <Divider className={classes.divider} />
+            <BlockButton format="numbered-list" icon={FormatListNumberedIcon} />
+            <BlockButton format="bulleted-list" icon={FormatListBulletedIcon} />
+            <Divider className={classes.divider} />
+            <BlockButton format="block-quote" icon={FormatQuoteIcon} />
+            <Divider className={classes.divider} />
+            <MarkButton format="code" icon={CodeIcon} />
+            {/* <MarkButton format="codeblock" icon={IntegrationInstructionsIcon} /> */}
+          </Toolbar>
+          <Editable
+            className={classes.editable}
+            renderElement={renderElement}
+            renderLeaf={renderLeaf}
+            placeholder="DeepChat here..."
+            spellCheck
+            autoFocus
+            onKeyDown={(event) => {
+              for (const hotkey in HOTKEYS) {
+                if (isHotkey(hotkey, event)) {
+                  event.preventDefault();
+                  const mark = HOTKEYS[hotkey];
+                  toggleMark(editor, mark);
+                }
+              }
 
-            <AddCircleOutlineIcon />
-          </IconButton>
-          <Divider className={classes.divider} />
-          <div style={{ position: "relative" }}>
+              if (target || showMentionList) {
+                switch (event.key) {
+                  case "ArrowDown":
+                    event.preventDefault();
+                    const prevIndex = index >= chars.length - 1 ? 0 : index + 1;
+                    setIndex(prevIndex);
+                    break;
+                  case "ArrowUp":
+                    event.preventDefault();
+                    const nextIndex = index <= 0 ? chars.length - 1 : index - 1;
+                    setIndex(nextIndex);
+                    break;
+                  case "Tab":
+                  case "Enter":
+                    event.preventDefault();
+                    Transforms.select(editor, target);
+                    insertMention(editor, chars[index]);
+                    setTarget(null);
+                    setShowMentionList(false);
+                    break;
+                  case "Escape":
+                    event.preventDefault();
+                    setTarget(null);
+                    setShowMentionList(false);
+                    break;
+                  default:
+                    break;
+                }
+              }
+            }}
+          />
+          <FileList
+            files={files}
+            onDelete={(file) => updateSelectedFile(file, "delete")}
+          />
+          <Box display="flex">
             <IconButton
-              onMouseDown={() => setShowEmoji(!showEmoji)}
               size="small"
+              onMouseDown={() => inputFile.current.click()}
             >
-              <InsertEmoticonIcon />
+              <input
+                type="file"
+                id="file"
+                ref={inputFile}
+                style={{ display: "none" }}
+                onChange={(e) => updateSelectedFile(e.target.files[0], "add")}
+              />
+
+              <AddCircleOutlineIcon />
             </IconButton>
-            <div
-              className={classes.emojiPicker}
-              style={{ display: showEmoji ? "block" : "none" }}
-            >
-              <EmojiPicker onEmojiClick={onEmojiClick} />
-            </div>
-          </div>
-          <div style={{ position: "relative" }}>
-            <IconButton
-              size="small"
-              onMouseDown={(event) => {
-                event.preventDefault();
-                setShowMentionList(!showMentionList);
-              }}
-            >
-              <AlternateEmailIcon />
-            </IconButton>
-            {(showMentionList || (target && chars.length > 0)) && (
+            <Divider className={classes.divider} />
+            <div style={{ position: "relative" }}>
+              <IconButton
+                onMouseDown={() => setShowEmoji(!showEmoji)}
+                size="small"
+              >
+                <InsertEmoticonIcon />
+              </IconButton>
               <div
-                style={{
-                  position: "absolute",
-                  zIndex: 1,
-                  bottom: "2rem",
-                  padding: "3px",
-                  width: "10rem",
-                  background: "white",
-                  borderRadius: "4px",
-                  boxShadow: "0 1px 5px rgba(0,0,0,.2)",
+                className={classes.emojiPicker}
+                style={{ display: showEmoji ? "block" : "none" }}
+              >
+                <EmojiPicker onEmojiClick={onEmojiClick} />
+              </div>
+            </div>
+            <div style={{ position: "relative" }}>
+              <IconButton
+                size="small"
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                  setShowMentionList(!showMentionList);
                 }}
               >
-                {chars?.map((char, i) => (
-                  <div
-                    key={char}
-                    className={classes.atList}
-                    style={{
-                      padding: "1px 3px",
-                      borderRadius: "3px",
-                      background: i === index ? "#B4D5FF" : "transparent",
-                      cursor: "pointer",
-                    }}
-                    onMouseDown={() => {
-                      Transforms.select(editor, target);
-                      insertMention(editor, char);
-                      setShowMentionList(false);
-                    }}
-                  >
-                    {char}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <LoadingIconButton
-            size="small"
-            variant="contained"
-            color="primary"
-            className={classes.sendButton}
-            icon={<SendIcon />}
-            onClick={sendMessage}
-            isLoading={isLoading}
-          >
-            Send
-          </LoadingIconButton>
-        </Box>
-        <HyperLinkDialog
-          open={openLinkDialog}
-          onClose={() => setOpenLinkDialog(false)}
-          onSave={handleLinkSave}
-        />
-      </Slate>
+                <AlternateEmailIcon />
+              </IconButton>
+              {(showMentionList || (target && chars.length > 0)) && (
+                <div
+                  style={{
+                    position: "absolute",
+                    zIndex: 1,
+                    bottom: "2rem",
+                    padding: "3px",
+                    width: "10rem",
+                    background: "white",
+                    borderRadius: "4px",
+                    boxShadow: "0 1px 5px rgba(0,0,0,.2)",
+                  }}
+                >
+                  {chars?.map((char, i) => (
+                    <div
+                      key={char}
+                      className={classes.atList}
+                      style={{
+                        padding: "1px 3px",
+                        borderRadius: "3px",
+                        background: i === index ? "#B4D5FF" : "transparent",
+                        cursor: "pointer",
+                      }}
+                      onMouseDown={() => {
+                        Transforms.select(editor, target);
+                        insertMention(editor, char);
+                        setShowMentionList(false);
+                      }}
+                    >
+                      {char}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <LoadingIconButton
+              size="small"
+              variant="contained"
+              color="primary"
+              className={classes.sendButton}
+              icon={<SendIcon />}
+              onClick={sendMessage}
+              isLoading={isLoading}
+            >
+              Send
+            </LoadingIconButton>
+          </Box>
+          <HyperLinkDialog
+            open={openLinkDialog}
+            onClose={() => setOpenLinkDialog(false)}
+            onSave={handleLinkSave}
+          />
+        </Slate>
+      </div>
     </div>
   );
 };
@@ -631,9 +633,8 @@ const BlockButton = ({ format, icon: MuiIcon }) => {
         event.preventDefault();
         toggleBlock(editor, format);
       }}
-    >
-      <Icon>{<MuiIcon />}</Icon>
-    </Button>
+      icon={<MuiIcon />}
+    />
   );
 };
 
@@ -650,9 +651,8 @@ const MarkButton = ({ format, icon: MuiIcon, onMouseDown: omd }) => {
               toggleMark(editor, format);
             }
       }
-    >
-      <Icon>{<MuiIcon />}</Icon>
-    </Button>
+      icon={<MuiIcon />}
+    />
   );
 };
 

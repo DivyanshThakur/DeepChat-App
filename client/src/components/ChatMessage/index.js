@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 // import IconButton from "@material-ui/core/IconButton";
 // import InfoIcon from "@material-ui/icons/Info";
-import { Avatar, Box, Typography } from "@material-ui/core";
+import { Avatar, Box, Typography, useTheme } from "@material-ui/core";
 import { useSelector } from "react-redux";
+import { Fab, Zoom } from "@material-ui/core";
+import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import Compose from "../Compose";
 import Toolbar from "../Toolbar";
 import { useGetChatsQuery } from "../../redux/api/chat";
@@ -12,11 +14,39 @@ import useStyles from "./style";
 
 export default function ChatMessage() {
   const classes = useStyles();
+  const theme = useTheme();
+  const scrollableRef = React.createRef();
 
   const chatId = useSelector((state) => state.selectedChat.chatId);
   const chat = useGetChatsQuery(undefined, {
     selectFromResult: ({ data }) => data?.find(({ _id }) => _id === chatId),
   });
+
+  const transitionDuration = {
+    enter: theme.transitions.duration.enteringScreen,
+    exit: theme.transitions.duration.leavingScreen,
+  };
+
+  const [showGoDownArrow, setShowGoDownArrow] = useState(false);
+
+  const scrollToBottom = () => {
+    scrollableRef.current?.scrollToBottom();
+  };
+
+  const GoDownButton = () => {
+    return (
+      <Zoom in={showGoDownArrow} timeout={transitionDuration} unmountOnExit>
+        <Fab
+          size="small"
+          className={classes.goDown}
+          color="primary"
+          onClick={() => scrollToBottom()}
+        >
+          <ArrowDownwardIcon />
+        </Fab>
+      </Zoom>
+    );
+  };
 
   return chatId ? (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -42,8 +72,14 @@ export default function ChatMessage() {
           ]
         }
       />
-      <ScrollableChat chatId={chatId} />
-      <Compose chatId={chatId} />
+      <ScrollableChat
+        chatId={chatId}
+        scrollableRef={scrollableRef}
+        setShowGoDownArrow={setShowGoDownArrow}
+      />
+      <Compose chatId={chatId}>
+        <GoDownButton />
+      </Compose>
     </div>
   ) : (
     <Box
