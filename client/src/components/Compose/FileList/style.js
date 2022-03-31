@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
     )`,
     boxShadow: "0 0.2rem 1.9rem -1rem rgba(0, 0, 0, 0.6)",
     display: "flex",
-    border: "0.08rem solid black",
+    border: "0.01rem solid #ccc",
     borderRadius: "2rem",
     padding: "0.4rem",
     margin: "0.5rem 0.5rem 1rem",

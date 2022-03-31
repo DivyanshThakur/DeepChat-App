@@ -4,7 +4,7 @@ import "./LinkPreview.css";
 const LinkPreviewSkeleton = () => {
   return (
     <div className="link-list-item">
-      <Skeleton animation="wave" variant="square" width={78} height={78} />
+      <Skeleton animation="wave" variant="rect" width={78} height={78} />
       <div className="link-info">
         <Skeleton
           className="link-title"

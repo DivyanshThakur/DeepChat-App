@@ -13,7 +13,7 @@ const AvailableUsers = ({ data, selected, onSelect, multiple }) => {
 
   return (
     <List aria-label="next-in-line-list" className={classes.root}>
-      {data.length > 0 ? (
+      {data?.length > 0 ? (
         data.map((user, index) => {
           return (
             <React.Fragment key={index}>

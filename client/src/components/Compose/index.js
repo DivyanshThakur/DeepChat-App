@@ -30,17 +30,18 @@ import InsertEmoticonIcon from "@material-ui/icons/InsertEmoticon";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import AlternateEmailIcon from "@material-ui/icons/AlternateEmail";
 import SendIcon from "@material-ui/icons/Send";
-import { Button, Toolbar } from "./components";
-import useStyles from "./style";
-import "./Compose.css";
-import FileList from "./FileList";
 import HyperLinkDialog from "../Dialog/HyperLinkDialog";
-import serialize from "./searialize";
-import protectedHandler from "../../utils/protectedHandler";
 import { useSendMessageMutation } from "../../redux/api/message";
 import LoadingIconButton from "../button/LoadingIconButton";
+import protectedHandler from "../../utils/protectedHandler";
+import { Button, Toolbar } from "./components";
 import notify from "../../utils/notify";
 import socket from "../../utils/socket";
+import serialize from "./searialize";
+import FileList from "./FileList";
+import useStyles from "./style";
+import "./Compose.css";
+import { getUserAuth } from "../../utils/userAuth";
 
 const HOTKEYS = {
   "mod+b": "bold",
@@ -52,8 +53,9 @@ const HOTKEYS = {
 const LIST_TYPES = ["numbered-list", "bulleted-list"];
 const TEXT_ALIGN_TYPES = ["left", "center", "right", "justify"];
 
-const Compose = ({ chatId, children }) => {
+const Compose = ({ chatId, users, children }) => {
   const classes = useStyles();
+  const { userId } = getUserAuth();
 
   const [sendMessageToServer, { isLoading }] = useSendMessageMutation();
 
@@ -89,9 +91,12 @@ const Compose = ({ chatId, children }) => {
     []
   );
 
-  const chars = CHARACTERS.filter((c) =>
-    c.toLowerCase().startsWith(search.toLowerCase())
-  ).slice(0, 10);
+  const filteredUsers = users
+    .filter(
+      ({ name, _id }) =>
+        userId !== _id && name.toLowerCase().startsWith(search.toLowerCase())
+    )
+    .slice(0, 10);
 
   const onEmojiClick = (_event, emojiObject) => {
     setShowEmoji(false);
@@ -185,6 +190,7 @@ const Compose = ({ chatId, children }) => {
             }
 
             setTarget(null);
+            setSearch("");
           }}
         >
           <Toolbar>
@@ -226,25 +232,29 @@ const Compose = ({ chatId, children }) => {
                 switch (event.key) {
                   case "ArrowDown":
                     event.preventDefault();
-                    const prevIndex = index >= chars.length - 1 ? 0 : index + 1;
+                    const prevIndex =
+                      index >= filteredUsers.length - 1 ? 0 : index + 1;
                     setIndex(prevIndex);
                     break;
                   case "ArrowUp":
                     event.preventDefault();
-                    const nextIndex = index <= 0 ? chars.length - 1 : index - 1;
+                    const nextIndex =
+                      index <= 0 ? filteredUsers.length - 1 : index - 1;
                     setIndex(nextIndex);
                     break;
                   case "Tab":
                   case "Enter":
                     event.preventDefault();
                     Transforms.select(editor, target);
-                    insertMention(editor, chars[index]);
+                    insertMention(editor, filteredUsers[index]);
                     setTarget(null);
+                    setSearch("");
                     setShowMentionList(false);
                     break;
                   case "Escape":
                     event.preventDefault();
                     setTarget(null);
+                    setSearch("");
                     setShowMentionList(false);
                     break;
                   default:
@@ -297,7 +307,7 @@ const Compose = ({ chatId, children }) => {
               >
                 <AlternateEmailIcon />
               </IconButton>
-              {(showMentionList || (target && chars.length > 0)) && (
+              {(showMentionList || (target && filteredUsers.length > 0)) && (
                 <div
                   style={{
                     position: "absolute",
@@ -310,9 +320,9 @@ const Compose = ({ chatId, children }) => {
                     boxShadow: "0 1px 5px rgba(0,0,0,.2)",
                   }}
                 >
-                  {chars?.map((char, i) => (
+                  {filteredUsers?.map((user, i) => (
                     <div
-                      key={char}
+                      key={user._id}
                       className={classes.atList}
                       style={{
                         padding: "1px 3px",
@@ -322,11 +332,11 @@ const Compose = ({ chatId, children }) => {
                       }}
                       onMouseDown={() => {
                         Transforms.select(editor, target);
-                        insertMention(editor, char);
+                        insertMention(editor, user);
                         setShowMentionList(false);
                       }}
                     >
-                      {char}
+                      {user.name}
                     </div>
                   ))}
                 </div>
@@ -473,10 +483,11 @@ const insertHyperLink = (editor, { url, text }) => {
   Transforms.move(editor);
 };
 
-const insertMention = (editor, character) => {
+const insertMention = (editor, data) => {
   const mention = {
     type: "mention",
-    character,
+    userId: data._id,
+    character: data.name,
     children: [{ text: "" }],
   };
   Transforms.insertNodes(editor, mention);
@@ -543,7 +554,7 @@ const Mention = ({ attributes, children, element }) => {
     <span
       {...attributes}
       contentEditable={false}
-      data-cy={`mention-${element.character.replace(" ", "-")}`}
+      data-cy={`mention-${element.character?.replace(" ", "-")}`}
       style={{
         padding: "0.1rem 0.3rem",
         margin: "0 0.3rem",

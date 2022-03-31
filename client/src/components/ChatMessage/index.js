@@ -77,7 +77,7 @@ export default function ChatMessage() {
         scrollableRef={scrollableRef}
         setShowGoDownArrow={setShowGoDownArrow}
       />
-      <Compose chatId={chatId}>
+      <Compose chatId={chatId} users={chat.users}>
         <GoDownButton />
       </Compose>
     </div>
