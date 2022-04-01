@@ -12,7 +12,14 @@ const messageSchema = new Schema(
       ref: USER,
     },
     content: ReqString,
-    files: [String],
+    files: [
+      {
+        name: ReqString,
+        type: ReqString,
+        url: ReqString,
+        downloadUrl: ReqString,
+      },
+    ],
     chat: {
       type: ObjectId,
       ref: CHAT,

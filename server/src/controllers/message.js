@@ -29,8 +29,17 @@ export const sendMessage = asyncHandler(async (req, res) => {
   if (files && files.length > 0) {
     const fileUrls = [];
     for (var i = 0; i < files.length; i++) {
-      const { Location } = await uploadFile(files[i]);
-      fileUrls.push(Location);
+      try {
+        const { url, downloadUrl } = await uploadFile(files[i]);
+        fileUrls.push({
+          name: files[i].originalname,
+          type: files[i].mimetype,
+          url: url,
+          downloadUrl,
+        });
+      } catch (e) {
+        console.log(e);
+      }
     }
 
     newMessage.files = fileUrls;

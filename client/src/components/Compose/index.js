@@ -72,6 +72,8 @@ const Compose = ({ chatId, users, children }) => {
   const [openLinkDialog, setOpenLinkDialog] = useState(false);
 
   const updateSelectedFile = (file, action) => {
+    if(!file) return;
+
     if (action === "add") {
       setFiles([...files, file]);
     } else {
@@ -672,15 +674,6 @@ const initialValue = [
     type: "paragraph",
     children: [{ text: "" }],
   },
-];
-
-const CHARACTERS = [
-  "Aayla Secura",
-  "Adi Gallia",
-  "Admiral Dodd Rancit",
-  "Admiral Firmus Piett",
-  "Admiral Gial Ackbar",
-  "Admiral Ozzel",
 ];
 
 export default Compose;

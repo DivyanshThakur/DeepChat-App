@@ -47,8 +47,8 @@ const getIdFromUrl = (url) => {
   return url.substring(43);
 };
 
-const getUrlFromId = (id) => {
-  return `https://drive.google.com/uc?export=view&id=${id}`
+const getUrlFromId = (id, type = "view") => {
+  return `https://drive.google.com/uc?export=${type}&id=${id}`;
 };
 
 export const uploadFile = async (file, folderId) => {
@@ -75,7 +75,10 @@ export const uploadFile = async (file, folderId) => {
       },
     });
 
-    return { Location: getUrlFromId(fileId) };
+    return {
+      url: getUrlFromId(fileId),
+      downloadUrl: getUrlFromId(fileId, "download"),
+    };
 
     /* 
     webViewLink: View the file in browser
@@ -83,7 +86,7 @@ export const uploadFile = async (file, folderId) => {
     */
     // const result = await drive.files.get({
     //   fileId,
-    //   fields: 'webViewLink',
+    //   fields: "webViewLink",
     // });
   } catch (error) {
     console.log(error.message);
