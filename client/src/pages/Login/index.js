@@ -1,7 +1,7 @@
 import React from "react";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import LoadingButton from "../../components/button/LoadingButton";
@@ -84,11 +84,11 @@ const Login = () => {
         >
           Log In
         </LoadingButton>
-        <div className={classes.forgotPasswordLink}>
+        {/* <div className={classes.forgotPasswordLink}>
           <Link to="/auth/forgot-password">
             {"Did you forget your password?"}
           </Link>
-        </div>
+        </div> */}
         <Divider />
         <Button
           fullWidth
