@@ -20,7 +20,7 @@ const AvailableUsers = ({ data, selected, onSelect, multiple }) => {
               <ListItem
                 selected={
                   multiple
-                    ? selected.find(({ _id }) => _id === user._id) != null
+                    ? selected?.find(({ _id }) => _id === user._id) != null
                     : selected === user._id
                 }
                 button
