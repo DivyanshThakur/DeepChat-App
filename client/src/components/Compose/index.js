@@ -94,11 +94,11 @@ const Compose = ({ chatId, users, children }) => {
   );
 
   const filteredUsers = users
-    .filter(
+    ?.filter(
       ({ name, _id }) =>
         userId !== _id && name.toLowerCase().startsWith(search.toLowerCase())
     )
-    .slice(0, 10);
+    ?.slice(0, 10);
 
   const onEmojiClick = (_event, emojiObject) => {
     setShowEmoji(false);
