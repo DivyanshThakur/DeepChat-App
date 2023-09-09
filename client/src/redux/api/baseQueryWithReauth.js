@@ -7,8 +7,8 @@ import {
 
 const url =
   process.env.NODE_ENV === "development"
-    ? process.env.REACT_APP_SERVER_URL_DEV
-    : process.env.REACT_APP_SERVER_URL;
+    ? "http://localhost:5000"
+    : "https://deep-chat-app.vercel.app";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `${url}/api`,
